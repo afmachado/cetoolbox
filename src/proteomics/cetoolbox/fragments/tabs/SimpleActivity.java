@@ -173,8 +173,8 @@ public class SimpleActivity extends Activity implements
 					duration, viscosity, capillaryLength, toWindowLength,
 					concentration, molecularWeight);
 			DecimalFormat myFormatter = new DecimalFormat("#.##");
-			Double deliveredVolume = capillary.getDeliveredVolume();
-			Double capillaryVolume = capillary.getCapillaryVolume();
+			Double deliveredVolume = capillary.getDeliveredVolume(); /* nl */
+			Double capillaryVolume = capillary.getCapillaryVolume(); /* nl */
 			/* Compute injected quantity of analyte */
 			Double analyteMass; /* ng */
 			Double analyteMol; /* mmol */
@@ -183,7 +183,7 @@ public class SimpleActivity extends Activity implements
 				analyteMol = analyteMass / molecularWeight * 1000;
 			} else {
 				analyteMol = deliveredVolume * concentration;
-				analyteMass = analyteMol * molecularWeight;
+				analyteMass = analyteMol * molecularWeight / 1000;
 			}
 
 			Double plugLength = deliveredVolume / capillaryVolume * 100;
