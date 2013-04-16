@@ -21,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.content.SharedPreferences;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
 import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.util.Locale;
@@ -38,6 +38,8 @@ import proteomics.cetoolbox.R;
 
 public class SimpleActivity extends Activity implements
 		AdapterView.OnItemSelectedListener, View.OnClickListener {
+
+	public static final String PREFS_NAME = "capillary.electrophoresis.toolbox.PREFERENCE_FILE_KEY";
 
 	Button calculate;
 	Button reset;
@@ -70,26 +72,23 @@ public class SimpleActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (savedInstanceState == null) {
-			diameter = 30.0;
-			duration = 21.0;
-			viscosity = 1.0;
-			capillaryLength = 100.0;
-			pressure = 27.5792;
-			toWindowLength = 90.0;
-			concentration = 21.0;
-			molecularWeight = 150000.0;
-		} else {
-			diameter = savedInstanceState.getDouble("diameter");
-			duration = savedInstanceState.getDouble("duration");
-			viscosity = savedInstanceState.getDouble("viscosity");
-			capillaryLength = savedInstanceState.getDouble("capillaryLength");
-			pressure = savedInstanceState.getDouble("pressure");
-			toWindowLength = savedInstanceState.getDouble("toWindowLength");
-			concentration = savedInstanceState.getDouble("concentration");
-			molecularWeight = savedInstanceState.getDouble("molecularWeight");
-
-		}
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		diameter = Double.longBitsToDouble(settings.getLong("diameter",
+				Double.doubleToLongBits(30.0)));
+		duration = Double.longBitsToDouble(settings.getLong("duration",
+				Double.doubleToLongBits(21.0)));
+		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
+				Double.doubleToLongBits(1.0)));
+		capillaryLength = Double.longBitsToDouble(settings.getLong(
+				"capillaryLength", Double.doubleToLongBits(100.0)));
+		pressure = Double.longBitsToDouble(settings.getLong("pressure",
+				Double.doubleToLongBits(27.5792)));
+		toWindowLength = Double.longBitsToDouble(settings.getLong(
+				"toWindowLength", Double.doubleToLongBits(90.0)));
+		concentration = Double.longBitsToDouble(settings.getLong(
+				"concentration", Double.doubleToLongBits(21.0)));
+		molecularWeight = Double.longBitsToDouble(settings.getLong(
+				"molecularWeight", Double.doubleToLongBits(150000.0)));
 
 		String languageToLoad = "en";
 		Locale locale = new Locale(languageToLoad);
@@ -135,6 +134,21 @@ public class SimpleActivity extends Activity implements
 		editTextInitialize();
 	}
 
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		diameter = savedInstanceState.getDouble("diameter");
+		duration = savedInstanceState.getDouble("duration");
+		viscosity = savedInstanceState.getDouble("viscosity");
+		capillaryLength = savedInstanceState.getDouble("capillaryLength");
+		pressure = savedInstanceState.getDouble("pressure");
+		toWindowLength = savedInstanceState.getDouble("toWindowLength");
+		concentration = savedInstanceState.getDouble("concentration");
+		molecularWeight = savedInstanceState.getDouble("molecularWeight");
+
+		/* Initialize content */
+		editTextInitialize();
+	}
+
 	private void editTextInitialize() {
 		capillaryLengthValue.setText(capillaryLength.toString());
 		diameterValue.setText(diameter.toString());
@@ -168,7 +182,21 @@ public class SimpleActivity extends Activity implements
 			molecularWeight = Double.valueOf(molecularWeightValue.getText()
 					.toString());
 
-			/* If all is fine, we create the capillary and compute */
+			/* If all is fine, save the data and compute */
+			SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME,
+					0).edit();
+
+			editor.putLong("diameter", Double.doubleToLongBits(30.0));
+			editor.putLong("duration", Double.doubleToLongBits(21.0));
+			editor.putLong("viscosity", Double.doubleToLongBits(1.0));
+			editor.putLong("capillaryLength", Double.doubleToLongBits(100.0));
+			editor.putLong("pressure", Double.doubleToLongBits(27.5792));
+			editor.putLong("toWindowLength", Double.doubleToLongBits(90.0));
+			editor.putLong("concentration", Double.doubleToLongBits(21.0));
+			editor.putLong("molecularWeight", Double.doubleToLongBits(150000.0));
+
+			editor.commit();
+
 			capillary = new CapillaryElectrophoresis(pressure, diameter,
 					duration, viscosity, capillaryLength, toWindowLength,
 					concentration, molecularWeight);
@@ -194,25 +222,29 @@ public class SimpleActivity extends Activity implements
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 			builder.setView(simpleDetailsView);
-			
+
 			TextView title = new TextView(this);
-            title.setText("Injection Details");
-            title.setTextSize(20);
-            title.setBackgroundColor(Color.DKGRAY);
-            title.setTextColor(Color.WHITE);
-            title.setPadding(10,10,10,10);
-            title.setGravity(Gravity.CENTER);
-            builder.setCustomTitle(title);
-            
-			TextView tvHydrodynamicInjection = (TextView) simpleDetailsView.findViewById(R.id.hydrodynamicInjectionValue);
+			title.setText("Injection Details");
+			title.setTextSize(20);
+			title.setBackgroundColor(Color.DKGRAY);
+			title.setTextColor(Color.WHITE);
+			title.setPadding(10, 10, 10, 10);
+			title.setGravity(Gravity.CENTER);
+			builder.setCustomTitle(title);
+
+			TextView tvHydrodynamicInjection = (TextView) simpleDetailsView
+					.findViewById(R.id.hydrodynamicInjectionValue);
 			tvHydrodynamicInjection.setText(myFormatter.format(deliveredVolume)
 					+ " nl");
-			TextView tvCapillaryVolume = (TextView) simpleDetailsView.findViewById(R.id.capillaryVolumeValue);
+			TextView tvCapillaryVolume = (TextView) simpleDetailsView
+					.findViewById(R.id.capillaryVolumeValue);
 			tvCapillaryVolume.setText(myFormatter.format(capillaryVolume)
 					+ " nl");
-			TextView tvPlugLength = (TextView) simpleDetailsView.findViewById(R.id.plugLengthValue);
+			TextView tvPlugLength = (TextView) simpleDetailsView
+					.findViewById(R.id.plugLengthValue);
 			tvPlugLength.setText(myFormatter.format(plugLength));
-			TextView tvInjectedAnalyte = (TextView) simpleDetailsView.findViewById(R.id.injectedAnalyteValue);
+			TextView tvInjectedAnalyte = (TextView) simpleDetailsView
+					.findViewById(R.id.injectedAnalyteValue);
 			tvInjectedAnalyte.setText(myFormatter.format(analyteMass) + " ng\n"
 					+ myFormatter.format(analyteMol) + " pmol");
 
@@ -250,8 +282,6 @@ public class SimpleActivity extends Activity implements
 
 	@Override
 	public void onSaveInstanceState(Bundle state) {
-		super.onSaveInstanceState(state);
-
 		state.putDouble("diameter",
 				Double.valueOf(diameterValue.getText().toString()));
 		state.putDouble("duration",
@@ -268,6 +298,13 @@ public class SimpleActivity extends Activity implements
 				Double.valueOf(concentrationValue.getText().toString()));
 		state.putDouble("molecularWeight",
 				Double.valueOf(molecularWeightValue.getText().toString()));
+
+		super.onSaveInstanceState(state);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 	}
 
 }
