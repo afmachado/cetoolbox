@@ -20,8 +20,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.content.SharedPreferences;
+import android.text.style.TypefaceSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -163,6 +165,7 @@ public class SimpleActivity extends Activity implements
 	@Override
 	public void onClick(View view) {
 		if (view == calculate) {
+			boolean isFull = false;
 			/* Parameter validation */
 			diameter = Double.valueOf(diameterValue.getText().toString());
 			duration = Double.valueOf(durationValue.getText().toString());
@@ -203,6 +206,11 @@ public class SimpleActivity extends Activity implements
 			DecimalFormat myFormatter = new DecimalFormat("#.##");
 			Double deliveredVolume = capillary.getDeliveredVolume(); /* nl */
 			Double capillaryVolume = capillary.getCapillaryVolume(); /* nl */
+			if (deliveredVolume > capillaryVolume) {
+				 deliveredVolume = capillaryVolume;
+				 isFull = true;
+			}
+
 			/* Compute injected quantity of analyte */
 			Double analyteMass; /* ng */
 			Double analyteMol; /* mmol */
@@ -248,6 +256,12 @@ public class SimpleActivity extends Activity implements
 			tvInjectedAnalyte.setText(myFormatter.format(analyteMass) + " ng\n"
 					+ myFormatter.format(analyteMol) + " pmol");
 
+			if (isFull) {
+                TextView tvMessage = (TextView)	simpleDetailsView.findViewById(R.id.simpleMessage);
+                tvMessage.setTextColor(Color.RED);
+                tvMessage.setTypeface(null, Typeface.BOLD);
+			    tvMessage.setText("Warning: the capillary is full !");
+			}
 			builder.setNeutralButton("Close",
 					new DialogInterface.OnClickListener() {
 						@Override
