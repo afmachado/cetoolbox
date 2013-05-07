@@ -19,14 +19,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
 import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.util.Locale;
@@ -35,6 +39,8 @@ import proteomics.cetoolbox.R;
 
 public class ExpertActivity extends Activity implements
 		AdapterView.OnItemSelectedListener, View.OnClickListener {
+
+	public static final String PREFS_NAME = "capillary.electrophoresis.toolbox.PREFERENCE_FILE_KEY";
 
 	Button calculate;
 	Button reset;
@@ -46,6 +52,7 @@ public class ExpertActivity extends Activity implements
 	EditText toWindowLengthValue;
 	EditText concentrationValue;
 	EditText molecularWeightValue;
+	EditText voltageValue;
 	TextView tvConcentrationUnits;
 	Spinner concentrationSpin;
 	Spinner pressureSpin;
@@ -61,46 +68,12 @@ public class ExpertActivity extends Activity implements
 	Double toWindowLength;
 	Double concentration;
 	Double molecularWeight;
+	Double voltage;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		diameter = 30.0;
-		duration = 21.0;
-		viscosity = 1.0;
-		capillaryLength = 100.0;
-		pressure = 27.5792;
-		toWindowLength = 90.0;
-		concentration = 21.0;
-		molecularWeight = 150000.0;
-		if ( savedInstanceState != null ) {
-			if (savedInstanceState.containsKey("diameter")) {
-			  diameter = savedInstanceState.getDouble("diameter");
-			}
-			if (savedInstanceState.containsKey("duration")) {
-			duration = savedInstanceState.getDouble("duration");
-			}
-			if (savedInstanceState.containsKey("viscosity")) {
-			viscosity = savedInstanceState.getDouble("viscosity");
-			}
-			if (savedInstanceState.containsKey("capillaryLength")) {
-			capillaryLength = savedInstanceState.getDouble("capillaryLength");
-			}
-			if (savedInstanceState.containsKey("pressure")) {
-			pressure = savedInstanceState.getDouble("pressure");
-			}
-			if (savedInstanceState.containsKey("toWindowLength")) {
-			toWindowLength = savedInstanceState.getDouble("toWindowLength");
-			}
-			if (savedInstanceState.containsKey("concentration")) {
-			concentration = savedInstanceState.getDouble("concentration");
-			}
-			if (savedInstanceState.containsKey("molecularWeight")) {
-			molecularWeight = savedInstanceState.getDouble("molecularWeight");
-			}
-		}
 
 		String languageToLoad = "en";
 		Locale locale = new Locale(languageToLoad);
@@ -119,6 +92,7 @@ public class ExpertActivity extends Activity implements
 		viscosityValue = (EditText) findViewById(R.id.viscosityValue);
 		concentrationValue = (EditText) findViewById(R.id.concentrationValue);
 		molecularWeightValue = (EditText) findViewById(R.id.molecularWeightValue);
+		voltageValue = (EditText) findViewById(R.id.voltageValue);
 		concentrationSpin = (Spinner) findViewById(R.id.concentrationSpin);
 		concentrationSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> concentrationUnitsAdapter = ArrayAdapter
@@ -142,6 +116,45 @@ public class ExpertActivity extends Activity implements
 		reset = (Button) findViewById(R.id.button2);
 		reset.setOnClickListener(this);
 
+		/* Restore preferences */
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		diameter = Double.longBitsToDouble(settings.getLong("diameter",
+				Double.doubleToLongBits(30.0)));
+		duration = Double.longBitsToDouble(settings.getLong("duration",
+				Double.doubleToLongBits(21.0)));
+		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
+				Double.doubleToLongBits(1.0)));
+		capillaryLength = Double.longBitsToDouble(settings.getLong(
+				"capillaryLength", Double.doubleToLongBits(100.0)));
+		pressure = Double.longBitsToDouble(settings.getLong("pressure",
+				Double.doubleToLongBits(27.5792)));
+		toWindowLength = Double.longBitsToDouble(settings.getLong(
+				"toWindowLength", Double.doubleToLongBits(90.0)));
+		concentration = Double.longBitsToDouble(settings.getLong(
+				"concentration", Double.doubleToLongBits(21.0)));
+		molecularWeight = Double.longBitsToDouble(settings.getLong(
+				"molecularWeight", Double.doubleToLongBits(150000.0)));
+		voltage = Double.longBitsToDouble(settings.getLong("voltage",
+				Double.doubleToLongBits(30.0)));
+
+         /* Initialize content */
+		editTextInitialize();
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+
+		diameter = savedInstanceState.getDouble("diameter");
+		duration = savedInstanceState.getDouble("duration");
+		viscosity = savedInstanceState.getDouble("viscosity");
+		capillaryLength = savedInstanceState.getDouble("capillaryLength");
+		pressure = savedInstanceState.getDouble("pressure");
+		toWindowLength = savedInstanceState.getDouble("toWindowLength");
+		concentration = savedInstanceState.getDouble("concentration");
+		molecularWeight = savedInstanceState.getDouble("molecularWeight");
+		voltage = savedInstanceState.getDouble("voltage");
+
 		/* Initialize content */
 		editTextInitialize();
 	}
@@ -155,11 +168,13 @@ public class ExpertActivity extends Activity implements
 		viscosityValue.setText(viscosity.toString());
 		concentrationValue.setText(concentration.toString());
 		molecularWeightValue.setText(molecularWeight.toString());
+		voltageValue.setText(voltage.toString());
 	}
 
 	@Override
 	public void onClick(View view) {
 		if (view == calculate) {
+			boolean isFull = false;
 			/* Parameter validation */
 			diameter = Double.valueOf(diameterValue.getText().toString());
 			duration = Double.valueOf(durationValue.getText().toString());
@@ -178,16 +193,40 @@ public class ExpertActivity extends Activity implements
 					.toString());
 			molecularWeight = Double.valueOf(molecularWeightValue.getText()
 					.toString());
+			voltage = Double.valueOf(voltageValue.getText().toString());
 
-			/* If all is fine, we create the capillary and compute */
+			/* If all is fine, save the data and compute */
+			SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+			SharedPreferences.Editor editor = preferences.edit();
+
+			editor.putLong("diameter", Double.doubleToLongBits(diameter));
+			editor.putLong("duration", Double.doubleToLongBits(duration));
+			editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
+			editor.putLong("capillaryLength",
+					Double.doubleToLongBits(capillaryLength));
+			editor.putLong("pressure", Double.doubleToLongBits(pressure));
+			editor.putLong("toWindowLength",
+					Double.doubleToLongBits(toWindowLength));
+			editor.putLong("concentration",
+					Double.doubleToLongBits(concentration));
+			editor.putLong("molecularWeight",
+					Double.doubleToLongBits(molecularWeight));
+			editor.putLong("voltage", Double.doubleToLongBits(voltage));
+			editor.commit();
+
 			capillary = new CapillaryElectrophoresis(pressure, diameter,
 					duration, viscosity, capillaryLength, toWindowLength,
 					concentration, molecularWeight);
-
-			String message = new String();
 			DecimalFormat myFormatter = new DecimalFormat("#.##");
-			Double deliveredVolume = capillary.getDeliveredVolume();
-			Double capillaryVolume = capillary.getCapillaryVolume();
+			Double deliveredVolume = capillary.getDeliveredVolume(); /* nl */
+			Double capillaryVolume = capillary.getCapillaryVolume(); /* nl */
+			if (deliveredVolume > capillaryVolume) {
+				deliveredVolume = capillaryVolume;
+				isFull = true;
+			}
+			Double capillaryToWindowVolume = capillary.getToWindowVolume(); /* nl */
+			Double injectionPlugLength = capillary.getInjectionPlugLength(); /* mm */
+			Double timeToReplaceVolume = capillary.getTimeToReplaceVolume(); /* s */
 			/* Compute injected quantity of analyte */
 			Double analyteMass; /* ng */
 			Double analyteMol; /* mmol */
@@ -196,25 +235,94 @@ public class ExpertActivity extends Activity implements
 				analyteMol = analyteMass / molecularWeight * 1000;
 			} else {
 				analyteMol = deliveredVolume * concentration;
-				analyteMass = analyteMol * molecularWeight;
+				analyteMass = analyteMol * molecularWeight / 1000;
 			}
 
 			Double plugLength = deliveredVolume / capillaryVolume * 100;
-			/* Are valueOf necessary ? */
-			message = "Hydrodynamic injection: "
-					+ myFormatter.format(deliveredVolume) + " nl\n";
-			message = message + "Capillary volume: "
-					+ myFormatter.format(capillaryVolume) + " nl\n";
-			message = message + "Plug (% of total length): "
-					+ myFormatter.format(plugLength) + "\n";
-			message = message + "Injected analyte: \n";
-			message = message + "  - " + myFormatter.format(analyteMass)
-					+ " ng\n";
-			message = message + "  - " + myFormatter.format(analyteMol)
-					+ " pmol\n";
+			Double plugLengthToWindow = deliveredVolume
+					/ capillaryToWindowVolume * 100;
+
+			LayoutInflater li = LayoutInflater.from(this);
+			View expertDetailsView = li.inflate(R.layout.expertresults, null);
+
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Computation results");
-			builder.setMessage(message);
+
+			builder.setView(expertDetailsView);
+
+			TextView title = new TextView(this);
+			title.setText("Injection Details");
+			title.setTextSize(20);
+			title.setBackgroundColor(Color.DKGRAY);
+			title.setTextColor(Color.WHITE);
+			title.setPadding(10, 10, 10, 10);
+			title.setGravity(Gravity.CENTER);
+			builder.setCustomTitle(title);
+
+			TextView tvHydrodynamicInjection = (TextView) expertDetailsView
+					.findViewById(R.id.hydrodynamicInjectionValue);
+			tvHydrodynamicInjection.setText(myFormatter.format(deliveredVolume)
+					+ " nl");
+
+			TextView tvCapillaryVolume = (TextView) expertDetailsView
+					.findViewById(R.id.capillaryVolumeValue);
+			tvCapillaryVolume.setText(myFormatter.format(capillaryVolume)
+					+ " nl");
+
+			TextView tvCapillaryToWindowVolume = (TextView) expertDetailsView
+					.findViewById(R.id.capillaryToWindowVolumeValue);
+			tvCapillaryToWindowVolume.setText(myFormatter
+					.format(capillaryToWindowVolume) + " nl");
+
+			TextView tvInjectionPlugLength = (TextView) expertDetailsView
+					.findViewById(R.id.injectionPlugLengthValue);
+			tvInjectionPlugLength.setText(myFormatter
+					.format(injectionPlugLength) + " mm");
+
+			TextView tvPlugLength = (TextView) expertDetailsView
+					.findViewById(R.id.plugLengthValue);
+			tvPlugLength.setText(myFormatter.format(plugLength));
+
+			TextView tvPlugLengthToWindow = (TextView) expertDetailsView
+					.findViewById(R.id.plugLengthToWindowValue);
+			tvPlugLengthToWindow
+					.setText(myFormatter.format(plugLengthToWindow));
+
+			TextView tvTimeToReplaceVolume = (TextView) expertDetailsView
+					.findViewById(R.id.timeToReplaceVolumeValue);
+			tvTimeToReplaceVolume.setText(myFormatter
+					.format(timeToReplaceVolume)
+					+ " s\n"
+					+ myFormatter.format(timeToReplaceVolume / 60) + " min");
+
+			TextView tvInjectedAnalyte = (TextView) expertDetailsView
+					.findViewById(R.id.injectedAnalyteValue);
+			tvInjectedAnalyte.setText(myFormatter.format(analyteMass) + " ng\n"
+					+ myFormatter.format(analyteMol) + " pmol");
+
+			TextView tvInjectionPressure = (TextView) expertDetailsView
+					.findViewById(R.id.injectionPressureValue);
+			tvInjectionPressure.setText(myFormatter.format(pressure * duration
+					* 100 / 6894.8) + " psi.s");
+
+			TextView tvFlowRate = (TextView) expertDetailsView
+					.findViewById(R.id.flowRateValue);
+			tvFlowRate.setText(myFormatter.format(capillaryVolume * 60
+					/ timeToReplaceVolume)
+					+ " nL/min");
+
+			TextView tvFieldStrength = (TextView) expertDetailsView
+					.findViewById(R.id.fieldStrengthValue);
+			tvFieldStrength.setText(myFormatter.format(30 * 1000
+					/ capillaryLength)
+					+ " V/cm");
+
+			if (isFull) {
+				TextView tvMessage = (TextView) expertDetailsView
+						.findViewById(R.id.simpleMessage);
+				tvMessage.setTextColor(Color.RED);
+				tvMessage.setTypeface(null, Typeface.BOLD);
+				tvMessage.setText("Warning: the capillary is full !");
+			}
 			builder.setNeutralButton("Close",
 					new DialogInterface.OnClickListener() {
 						@Override
@@ -249,8 +357,6 @@ public class ExpertActivity extends Activity implements
 
 	@Override
 	public void onSaveInstanceState(Bundle state) {
-		super.onSaveInstanceState(state);
-
 		state.putDouble("diameter",
 				Double.valueOf(diameterValue.getText().toString()));
 		state.putDouble("duration",
@@ -267,6 +373,15 @@ public class ExpertActivity extends Activity implements
 				Double.valueOf(concentrationValue.getText().toString()));
 		state.putDouble("molecularWeight",
 				Double.valueOf(molecularWeightValue.getText().toString()));
+		state.putDouble("voltage",
+				Double.valueOf(voltageValue.getText().toString()));
+		
+		super.onSaveInstanceState(state);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 	}
 
 }

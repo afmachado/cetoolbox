@@ -27,11 +27,13 @@
     <string name="toWindowLength">Length to window</string>
     <string name="Concentration">Concentration</string>
     <string name="MolecularWeight">Molecular weight</string>
+    <string name="Voltage">Voltage</string>
     <string name="Centimeter">cm</string>
     <string name="Centipoid">cp</string>
     <string name="Micrometer">μm</string>
     <string name="Second">s</string>
     <string name="Gpermol">g/mol</string>
+    <string name="Vpercm">V/cm</string>
     <string name="None"></string>
     <string name="Volume">Volume</string>
     <string name="Conductivity">Conductivity</string>
@@ -41,4 +43,12 @@
     <string name="CapillaryVolume">Capillary volume: </string>
     <string name="PlugLength">Plug (% of total length): </string>
     <string name="InjectedAnalyte">Injected analyte: </string>
+    <string name="TimeToReplaceVolume">Time to replace 1 volume: </string>
+    <string name="PlugLengthToWindow">Plug (% of length to window): </string>
+    <string name="InjectionPressure">Injection pressure: </string>
+    <string name="InjectionPlugLength">Injection plug length: </string>
+    <string name="FlowRate">Flow rate: </string>
+    <string name="FieldStrength">Field strength: </string>
+    <string name="CapillaryToWindowVolume">Capillary volume to window: </string>
+
 </resources>

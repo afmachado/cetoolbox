@@ -117,4 +117,17 @@ public class CapillaryElectrophoresis {
 		return toWindowVolume;
 	}
 
+	public double getInjectionPlugLength() {
+		double injectionPlugLength;
+		injectionPlugLength = (pressure * Math.pow(diameter, 2) * duration)
+				/ (32 * viscosity * totalLength * Math.pow(10, 2));
+		return injectionPlugLength;
+	}
+
+	public double getTimeToReplaceVolume() {
+		double timeToReplaceVolume;
+		timeToReplaceVolume = (32 * viscosity * Math.pow(totalLength, 2))
+				/ (Math.pow(diameter, 2) * Math.pow(10, -3) * pressure);
+		return timeToReplaceVolume;
+	}
 }
