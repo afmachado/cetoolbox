@@ -19,11 +19,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.content.SharedPreferences;
-import android.text.style.TypefaceSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,24 +73,6 @@ public class SimpleActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		diameter = Double.longBitsToDouble(settings.getLong("diameter",
-				Double.doubleToLongBits(30.0)));
-		duration = Double.longBitsToDouble(settings.getLong("duration",
-				Double.doubleToLongBits(21.0)));
-		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
-				Double.doubleToLongBits(1.0)));
-		capillaryLength = Double.longBitsToDouble(settings.getLong(
-				"capillaryLength", Double.doubleToLongBits(100.0)));
-		pressure = Double.longBitsToDouble(settings.getLong("pressure",
-				Double.doubleToLongBits(27.5792)));
-		toWindowLength = Double.longBitsToDouble(settings.getLong(
-				"toWindowLength", Double.doubleToLongBits(90.0)));
-		concentration = Double.longBitsToDouble(settings.getLong(
-				"concentration", Double.doubleToLongBits(21.0)));
-		molecularWeight = Double.longBitsToDouble(settings.getLong(
-				"molecularWeight", Double.doubleToLongBits(150000.0)));
-
 		String languageToLoad = "en";
 		Locale locale = new Locale(languageToLoad);
 		Locale.setDefault(locale);
@@ -132,12 +113,33 @@ public class SimpleActivity extends Activity implements
 		reset = (Button) findViewById(R.id.button2);
 		reset.setOnClickListener(this);
 
+		/* Restore preferences */
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		diameter = Double.longBitsToDouble(settings.getLong("diameter",
+				Double.doubleToLongBits(30.0)));
+		duration = Double.longBitsToDouble(settings.getLong("duration",
+				Double.doubleToLongBits(21.0)));
+		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
+				Double.doubleToLongBits(1.0)));
+		capillaryLength = Double.longBitsToDouble(settings.getLong(
+				"capillaryLength", Double.doubleToLongBits(100.0)));
+		pressure = Double.longBitsToDouble(settings.getLong("pressure",
+				Double.doubleToLongBits(27.5792)));
+		toWindowLength = Double.longBitsToDouble(settings.getLong(
+				"toWindowLength", Double.doubleToLongBits(90.0)));
+		concentration = Double.longBitsToDouble(settings.getLong(
+				"concentration", Double.doubleToLongBits(21.0)));
+		molecularWeight = Double.longBitsToDouble(settings.getLong(
+				"molecularWeight", Double.doubleToLongBits(150000.0)));
+
 		/* Initialize content */
 		editTextInitialize();
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+
 		diameter = savedInstanceState.getDouble("diameter");
 		duration = savedInstanceState.getDouble("duration");
 		viscosity = savedInstanceState.getDouble("viscosity");
@@ -146,6 +148,24 @@ public class SimpleActivity extends Activity implements
 		toWindowLength = savedInstanceState.getDouble("toWindowLength");
 		concentration = savedInstanceState.getDouble("concentration");
 		molecularWeight = savedInstanceState.getDouble("molecularWeight");
+		// Restore preferences
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		diameter = Double.longBitsToDouble(settings.getLong("diameter",
+				Double.doubleToLongBits(30.0)));
+		duration = Double.longBitsToDouble(settings.getLong("duration",
+				Double.doubleToLongBits(21.0)));
+		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
+				Double.doubleToLongBits(1.0)));
+		capillaryLength = Double.longBitsToDouble(settings.getLong(
+				"capillaryLength", Double.doubleToLongBits(100.0)));
+		pressure = Double.longBitsToDouble(settings.getLong("pressure",
+				Double.doubleToLongBits(27.5792)));
+		toWindowLength = Double.longBitsToDouble(settings.getLong(
+				"toWindowLength", Double.doubleToLongBits(90.0)));
+		concentration = Double.longBitsToDouble(settings.getLong(
+				"concentration", Double.doubleToLongBits(21.0)));
+		molecularWeight = Double.longBitsToDouble(settings.getLong(
+				"molecularWeight", Double.doubleToLongBits(150000.0)));
 
 		/* Initialize content */
 		editTextInitialize();
@@ -186,17 +206,17 @@ public class SimpleActivity extends Activity implements
 					.toString());
 
 			/* If all is fine, save the data and compute */
-			SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME,
-					0).edit();
+			SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
+			SharedPreferences.Editor editor =preferences.edit();
 
-			editor.putLong("diameter", Double.doubleToLongBits(30.0));
-			editor.putLong("duration", Double.doubleToLongBits(21.0));
-			editor.putLong("viscosity", Double.doubleToLongBits(1.0));
-			editor.putLong("capillaryLength", Double.doubleToLongBits(100.0));
-			editor.putLong("pressure", Double.doubleToLongBits(27.5792));
-			editor.putLong("toWindowLength", Double.doubleToLongBits(90.0));
-			editor.putLong("concentration", Double.doubleToLongBits(21.0));
-			editor.putLong("molecularWeight", Double.doubleToLongBits(150000.0));
+			editor.putLong("diameter", Double.doubleToLongBits(diameter));
+			editor.putLong("duration", Double.doubleToLongBits(duration));
+			editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
+			editor.putLong("capillaryLength", Double.doubleToLongBits(capillaryLength));
+			editor.putLong("pressure", Double.doubleToLongBits(pressure));
+			editor.putLong("toWindowLength", Double.doubleToLongBits(toWindowLength));
+			editor.putLong("concentration", Double.doubleToLongBits(concentration));
+			editor.putLong("molecularWeight", Double.doubleToLongBits(molecularWeight));
 
 			editor.commit();
 
