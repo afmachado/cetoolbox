@@ -18,6 +18,7 @@ package proteomics.cetoolbox;
 import proteomics.cetoolbox.fragments.tabs.AboutActivity;
 import proteomics.cetoolbox.fragments.tabs.ExpertActivity;
 import proteomics.cetoolbox.fragments.tabs.SimpleActivity;
+import proteomics.cetoolbox.GlobalState;
 import android.os.Bundle;
 import android.app.TabActivity;
 import android.widget.TabHost;
@@ -26,10 +27,15 @@ import android.content.Intent;
 import android.content.res.Resources;
 
 public class CEToolboxActivity extends TabActivity {
+
+	static public GlobalState fragmentData;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
+		fragmentData = new GlobalState(); // Store data when switching tab
 
 		TabHost tabHost = getTabHost(); // The activity TabHost
 		TabHost.TabSpec spec; // Reusable TabSpec for each tab

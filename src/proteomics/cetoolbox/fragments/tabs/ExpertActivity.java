@@ -34,6 +34,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.util.Locale;
+
+import proteomics.cetoolbox.CEToolboxActivity;
 import proteomics.cetoolbox.CapillaryElectrophoresis;
 import proteomics.cetoolbox.R;
 
@@ -137,8 +139,15 @@ public class ExpertActivity extends Activity implements
 		voltage = Double.longBitsToDouble(settings.getLong("voltage",
 				Double.doubleToLongBits(30.0)));
 
-         /* Initialize content */
-		editTextInitialize();
+		/* Set GlobalState values */
+		CEToolboxActivity.fragmentData.setDiameter(diameter);
+		CEToolboxActivity.fragmentData.setDuration(duration);
+		CEToolboxActivity.fragmentData.setViscosity(viscosity);
+		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
+		CEToolboxActivity.fragmentData.setPressure(pressure);
+		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
+		CEToolboxActivity.fragmentData.setConcentration(concentration);
+		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
 	}
 
 	@Override
@@ -154,6 +163,30 @@ public class ExpertActivity extends Activity implements
 		concentration = savedInstanceState.getDouble("concentration");
 		molecularWeight = savedInstanceState.getDouble("molecularWeight");
 		voltage = savedInstanceState.getDouble("voltage");
+
+		/* Set GlobalState values */
+		CEToolboxActivity.fragmentData.setDiameter(diameter);
+		CEToolboxActivity.fragmentData.setDuration(duration);
+		CEToolboxActivity.fragmentData.setViscosity(viscosity);
+		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
+		CEToolboxActivity.fragmentData.setPressure(pressure);
+		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
+		CEToolboxActivity.fragmentData.setConcentration(concentration);
+		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		diameter = CEToolboxActivity.fragmentData.getDiameter();
+		duration = CEToolboxActivity.fragmentData.getDuration();
+		viscosity = CEToolboxActivity.fragmentData.getViscosity();
+		capillaryLength = CEToolboxActivity.fragmentData.getCapillaryLength();
+		pressure = CEToolboxActivity.fragmentData.getPressure();
+		toWindowLength = CEToolboxActivity.fragmentData.getToWindowLength();
+		concentration = CEToolboxActivity.fragmentData.getConcentration();
+		molecularWeight = CEToolboxActivity.fragmentData.getMolecularWeight();
 
 		/* Initialize content */
 		editTextInitialize();
@@ -302,7 +335,8 @@ public class ExpertActivity extends Activity implements
 			TextView tvInjectionPressure = (TextView) expertDetailsView
 					.findViewById(R.id.injectionPressureValue);
 			tvInjectionPressure.setText(myFormatter.format(pressure * duration
-					* 100 / 6894.8) + " psi.s");
+					* 100 / 6894.8)
+					+ " psi.s");
 
 			TextView tvFlowRate = (TextView) expertDetailsView
 					.findViewById(R.id.flowRateValue);
@@ -312,13 +346,12 @@ public class ExpertActivity extends Activity implements
 
 			TextView tvFieldStrength = (TextView) expertDetailsView
 					.findViewById(R.id.fieldStrengthValue);
-			tvFieldStrength.setText(myFormatter.format(30 * 1000
-					/ capillaryLength)
-					+ " V/cm");
+			tvFieldStrength.setText(myFormatter
+					.format(30 * 1000 / capillaryLength) + " V/cm");
 
 			if (isFull) {
 				TextView tvMessage = (TextView) expertDetailsView
-						.findViewById(R.id.simpleMessage);
+						.findViewById(R.id.expertMessage);
 				tvMessage.setTextColor(Color.RED);
 				tvMessage.setTypeface(null, Typeface.BOLD);
 				tvMessage.setText("Warning: the capillary is full !");
@@ -356,6 +389,28 @@ public class ExpertActivity extends Activity implements
 	}
 
 	@Override
+	public void onPause() {
+		CEToolboxActivity.fragmentData.setDiameter(Double.valueOf(diameterValue
+				.getText().toString()));
+		CEToolboxActivity.fragmentData.setDuration(Double.valueOf(durationValue
+				.getText().toString()));
+		CEToolboxActivity.fragmentData.setViscosity(Double
+				.valueOf(viscosityValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setCapillaryLength(Double
+				.valueOf(capillaryLengthValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setPressure(Double.valueOf(pressureValue
+				.getText().toString()));
+		CEToolboxActivity.fragmentData.setToWindowLength(Double
+				.valueOf(toWindowLengthValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setConcentration(Double
+				.valueOf(concentrationValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setMolecularWeight(Double
+				.valueOf(molecularWeightValue.getText().toString()));
+
+		super.onPause();
+	}
+
+	@Override
 	public void onSaveInstanceState(Bundle state) {
 		state.putDouble("diameter",
 				Double.valueOf(diameterValue.getText().toString()));
@@ -375,7 +430,7 @@ public class ExpertActivity extends Activity implements
 				Double.valueOf(molecularWeightValue.getText().toString()));
 		state.putDouble("voltage",
 				Double.valueOf(voltageValue.getText().toString()));
-		
+
 		super.onSaveInstanceState(state);
 	}
 

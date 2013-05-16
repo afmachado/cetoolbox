@@ -34,6 +34,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.util.Locale;
+
+import proteomics.cetoolbox.CEToolboxActivity;
 import proteomics.cetoolbox.CapillaryElectrophoresis;
 import proteomics.cetoolbox.R;
 
@@ -132,8 +134,15 @@ public class SimpleActivity extends Activity implements
 		molecularWeight = Double.longBitsToDouble(settings.getLong(
 				"molecularWeight", Double.doubleToLongBits(150000.0)));
 
-		/* Initialize content */
-		editTextInitialize();
+		/* Set GlobalState values */
+		CEToolboxActivity.fragmentData.setDiameter(diameter);
+		CEToolboxActivity.fragmentData.setDuration(duration);
+		CEToolboxActivity.fragmentData.setViscosity(viscosity);
+		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
+		CEToolboxActivity.fragmentData.setPressure(pressure);
+		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
+		CEToolboxActivity.fragmentData.setConcentration(concentration);
+		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
 	}
 
 	@Override
@@ -148,24 +157,30 @@ public class SimpleActivity extends Activity implements
 		toWindowLength = savedInstanceState.getDouble("toWindowLength");
 		concentration = savedInstanceState.getDouble("concentration");
 		molecularWeight = savedInstanceState.getDouble("molecularWeight");
-		// Restore preferences
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		diameter = Double.longBitsToDouble(settings.getLong("diameter",
-				Double.doubleToLongBits(30.0)));
-		duration = Double.longBitsToDouble(settings.getLong("duration",
-				Double.doubleToLongBits(21.0)));
-		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
-				Double.doubleToLongBits(1.0)));
-		capillaryLength = Double.longBitsToDouble(settings.getLong(
-				"capillaryLength", Double.doubleToLongBits(100.0)));
-		pressure = Double.longBitsToDouble(settings.getLong("pressure",
-				Double.doubleToLongBits(27.5792)));
-		toWindowLength = Double.longBitsToDouble(settings.getLong(
-				"toWindowLength", Double.doubleToLongBits(90.0)));
-		concentration = Double.longBitsToDouble(settings.getLong(
-				"concentration", Double.doubleToLongBits(21.0)));
-		molecularWeight = Double.longBitsToDouble(settings.getLong(
-				"molecularWeight", Double.doubleToLongBits(150000.0)));
+
+		/* Set GlobalState values */
+		CEToolboxActivity.fragmentData.setDiameter(diameter);
+		CEToolboxActivity.fragmentData.setDuration(duration);
+		CEToolboxActivity.fragmentData.setViscosity(viscosity);
+		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
+		CEToolboxActivity.fragmentData.setPressure(pressure);
+		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
+		CEToolboxActivity.fragmentData.setConcentration(concentration);
+		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		diameter = CEToolboxActivity.fragmentData.getDiameter();
+		duration = CEToolboxActivity.fragmentData.getDuration();
+		viscosity = CEToolboxActivity.fragmentData.getViscosity();
+		capillaryLength = CEToolboxActivity.fragmentData.getCapillaryLength();
+		pressure = CEToolboxActivity.fragmentData.getPressure();
+		toWindowLength = CEToolboxActivity.fragmentData.getToWindowLength();
+		concentration = CEToolboxActivity.fragmentData.getConcentration();
+		molecularWeight = CEToolboxActivity.fragmentData.getMolecularWeight();
 
 		/* Initialize content */
 		editTextInitialize();
@@ -207,16 +222,20 @@ public class SimpleActivity extends Activity implements
 
 			/* If all is fine, save the data and compute */
 			SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
-			SharedPreferences.Editor editor =preferences.edit();
+			SharedPreferences.Editor editor = preferences.edit();
 
 			editor.putLong("diameter", Double.doubleToLongBits(diameter));
 			editor.putLong("duration", Double.doubleToLongBits(duration));
 			editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
-			editor.putLong("capillaryLength", Double.doubleToLongBits(capillaryLength));
+			editor.putLong("capillaryLength",
+					Double.doubleToLongBits(capillaryLength));
 			editor.putLong("pressure", Double.doubleToLongBits(pressure));
-			editor.putLong("toWindowLength", Double.doubleToLongBits(toWindowLength));
-			editor.putLong("concentration", Double.doubleToLongBits(concentration));
-			editor.putLong("molecularWeight", Double.doubleToLongBits(molecularWeight));
+			editor.putLong("toWindowLength",
+					Double.doubleToLongBits(toWindowLength));
+			editor.putLong("concentration",
+					Double.doubleToLongBits(concentration));
+			editor.putLong("molecularWeight",
+					Double.doubleToLongBits(molecularWeight));
 
 			editor.commit();
 
@@ -227,8 +246,8 @@ public class SimpleActivity extends Activity implements
 			Double deliveredVolume = capillary.getDeliveredVolume(); /* nl */
 			Double capillaryVolume = capillary.getCapillaryVolume(); /* nl */
 			if (deliveredVolume > capillaryVolume) {
-				 deliveredVolume = capillaryVolume;
-				 isFull = true;
+				deliveredVolume = capillaryVolume;
+				isFull = true;
 			}
 
 			/* Compute injected quantity of analyte */
@@ -277,10 +296,11 @@ public class SimpleActivity extends Activity implements
 					+ myFormatter.format(analyteMol) + " pmol");
 
 			if (isFull) {
-                TextView tvMessage = (TextView)	simpleDetailsView.findViewById(R.id.simpleMessage);
-                tvMessage.setTextColor(Color.RED);
-                tvMessage.setTypeface(null, Typeface.BOLD);
-			    tvMessage.setText("Warning: the capillary is full !");
+				TextView tvMessage = (TextView) simpleDetailsView
+						.findViewById(R.id.simpleMessage);
+				tvMessage.setTextColor(Color.RED);
+				tvMessage.setTypeface(null, Typeface.BOLD);
+				tvMessage.setText("Warning: the capillary is full !");
 			}
 			builder.setNeutralButton("Close",
 					new DialogInterface.OnClickListener() {
@@ -312,6 +332,28 @@ public class SimpleActivity extends Activity implements
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
 		/* concentrationSpin.setText(""); */
+	}
+
+	@Override
+	public void onPause() {
+		CEToolboxActivity.fragmentData.setDiameter(Double.valueOf(diameterValue
+				.getText().toString()));
+		CEToolboxActivity.fragmentData.setDuration(Double.valueOf(durationValue
+				.getText().toString()));
+		CEToolboxActivity.fragmentData.setViscosity(Double
+				.valueOf(viscosityValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setCapillaryLength(Double
+				.valueOf(capillaryLengthValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setPressure(Double.valueOf(pressureValue
+				.getText().toString()));
+		CEToolboxActivity.fragmentData.setToWindowLength(Double
+				.valueOf(toWindowLengthValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setConcentration(Double
+				.valueOf(concentrationValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setMolecularWeight(Double
+				.valueOf(molecularWeightValue.getText().toString()));
+
+		super.onPause();
 	}
 
 	@Override

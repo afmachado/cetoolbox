@@ -16,7 +16,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="proteomics.cetoolbox"
     android:versionCode="1"
-    android:versionName="0.8" >
+    android:versionName="0.9" >
 
     <uses-sdk
         android:minSdkVersion="10"
