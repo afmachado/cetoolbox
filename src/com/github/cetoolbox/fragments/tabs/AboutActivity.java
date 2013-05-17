@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package proteomics.cetoolbox.fragments.tabs;
+package com.github.cetoolbox.fragments.tabs;
 
-import proteomics.cetoolbox.R;
-
+import com.github.cetoolbox.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebView;

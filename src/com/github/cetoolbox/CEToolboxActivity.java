@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package proteomics.cetoolbox;
+package com.github.cetoolbox;
 
-import proteomics.cetoolbox.fragments.tabs.AboutActivity;
-import proteomics.cetoolbox.fragments.tabs.ExpertActivity;
-import proteomics.cetoolbox.fragments.tabs.SimpleActivity;
-import proteomics.cetoolbox.GlobalState;
+import com.github.cetoolbox.fragments.tabs.AboutActivity;
+import com.github.cetoolbox.fragments.tabs.ExpertActivity;
+import com.github.cetoolbox.fragments.tabs.SimpleActivity;
+import com.github.cetoolbox.GlobalState;
 import android.os.Bundle;
 import android.app.TabActivity;
 import android.widget.TabHost;

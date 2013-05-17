@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package proteomics.cetoolbox.fragments.tabs;
+package com.github.cetoolbox.fragments.tabs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,10 +34,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.util.Locale;
-
-import proteomics.cetoolbox.CEToolboxActivity;
-import proteomics.cetoolbox.CapillaryElectrophoresis;
-import proteomics.cetoolbox.R;
+import com.github.cetoolbox.CEToolboxActivity;
+import com.github.cetoolbox.CapillaryElectrophoresis;
+import com.github.cetoolbox.R;
 
 public class ExpertActivity extends Activity implements
 		AdapterView.OnItemSelectedListener, View.OnClickListener {
