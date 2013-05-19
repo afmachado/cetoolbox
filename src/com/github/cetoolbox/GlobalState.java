@@ -24,6 +24,8 @@ public class GlobalState {
 	private Double toWindowLength;
 	private Double concentration;
 	private Double molecularWeight;
+	private int concentrationSpinPosition;
+	private int pressureSpinPosition;
 
 	public void setDiameter(Double diameter) {
 		this.diameter = diameter;
@@ -87,5 +89,21 @@ public class GlobalState {
 
 	public Double getMolecularWeight() {
 		return molecularWeight;
+	}
+
+	public void setConcentrationSpinPosition(int concentrationSpinPosition) {
+		this.concentrationSpinPosition = concentrationSpinPosition;
+	}
+
+	public int getConcentrationSpinPosition() {
+		return concentrationSpinPosition;
+	}
+
+	public void setPressureSpinPosition(int pressureSpinPosition) {
+		this.pressureSpinPosition = pressureSpinPosition;
+	}
+
+	public int getPressureSpinPosition() {
+		return pressureSpinPosition;
 	}
 }

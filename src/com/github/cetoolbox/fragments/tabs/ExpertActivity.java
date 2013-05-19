@@ -36,6 +36,7 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 import com.github.cetoolbox.CEToolboxActivity;
 import com.github.cetoolbox.CapillaryElectrophoresis;
+import com.github.cetoolbox.GlobalState;
 import com.github.cetoolbox.R;
 
 public class ExpertActivity extends Activity implements
@@ -56,18 +57,21 @@ public class ExpertActivity extends Activity implements
 	EditText voltageValue;
 	TextView tvConcentrationUnits;
 	Spinner concentrationSpin;
+	int concentrationSpinPosition;
 	Spinner pressureSpin;
-	String concentrationUnit;
-	String pressureUnit;
+	int pressureSpinPosition;
+
 	CapillaryElectrophoresis capillary;
 
+	Double capillaryLength;
+	Double toWindowLength;
 	Double diameter;
+	Double pressure;
+	String pressureUnit;
 	Double duration;
 	Double viscosity;
-	Double capillaryLength;
-	Double pressure;
-	Double toWindowLength;
 	Double concentration;
+	String concentrationUnit;
 	Double molecularWeight;
 	Double voltage;
 
@@ -119,58 +123,63 @@ public class ExpertActivity extends Activity implements
 
 		/* Restore preferences */
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		diameter = Double.longBitsToDouble(settings.getLong("diameter",
-				Double.doubleToLongBits(30.0)));
-		duration = Double.longBitsToDouble(settings.getLong("duration",
-				Double.doubleToLongBits(21.0)));
-		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
-				Double.doubleToLongBits(1.0)));
 		capillaryLength = Double.longBitsToDouble(settings.getLong(
 				"capillaryLength", Double.doubleToLongBits(100.0)));
-		pressure = Double.longBitsToDouble(settings.getLong("pressure",
-				Double.doubleToLongBits(27.5792)));
 		toWindowLength = Double.longBitsToDouble(settings.getLong(
-				"toWindowLength", Double.doubleToLongBits(90.0)));
-		concentration = Double.longBitsToDouble(settings.getLong(
-				"concentration", Double.doubleToLongBits(21.0)));
-		molecularWeight = Double.longBitsToDouble(settings.getLong(
-				"molecularWeight", Double.doubleToLongBits(150000.0)));
-		voltage = Double.longBitsToDouble(settings.getLong("voltage",
+				"toWindowLength", Double.doubleToLongBits(100.0)));
+		diameter = Double.longBitsToDouble(settings.getLong("diameter",
+				Double.doubleToLongBits(50.0)));
+		pressure = Double.longBitsToDouble(settings.getLong("pressure",
 				Double.doubleToLongBits(30.0)));
+		pressureSpinPosition = settings.getInt("pressureSpinPosition", 0);
+		duration = Double.longBitsToDouble(settings.getLong("duration",
+				Double.doubleToLongBits(10.0)));
+		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
+				Double.doubleToLongBits(1.0)));
+		concentration = Double.longBitsToDouble(settings.getLong(
+				"concentration", Double.doubleToLongBits(1.0)));
+		concentrationSpinPosition = settings.getInt("concentratinSpinPosition",
+				0);
+		molecularWeight = Double.longBitsToDouble(settings.getLong(
+				"molecularWeight", Double.doubleToLongBits(1000.0)));
+		voltage = Double.longBitsToDouble(settings.getLong("voltage",
+				Double.doubleToLongBits(30000.0)));
 
-		/* Set GlobalState values */
-		CEToolboxActivity.fragmentData.setDiameter(diameter);
-		CEToolboxActivity.fragmentData.setDuration(duration);
-		CEToolboxActivity.fragmentData.setViscosity(viscosity);
-		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
-		CEToolboxActivity.fragmentData.setPressure(pressure);
-		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
-		CEToolboxActivity.fragmentData.setConcentration(concentration);
-		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
+		if (CEToolboxActivity.fragmentData == null) {
+			CEToolboxActivity.fragmentData = new GlobalState();
+            setGlobalStateValues();
+		} else {
+			getGlobalStateValues();
+		}
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 
+		capillaryLength = savedInstanceState.getDouble("capillaryLength");
+		toWindowLength = savedInstanceState.getDouble("toWindowLength");
 		diameter = savedInstanceState.getDouble("diameter");
+		pressure = savedInstanceState.getDouble("pressure");
 		duration = savedInstanceState.getDouble("duration");
 		viscosity = savedInstanceState.getDouble("viscosity");
-		capillaryLength = savedInstanceState.getDouble("capillaryLength");
-		pressure = savedInstanceState.getDouble("pressure");
-		toWindowLength = savedInstanceState.getDouble("toWindowLength");
 		concentration = savedInstanceState.getDouble("concentration");
 		molecularWeight = savedInstanceState.getDouble("molecularWeight");
 		voltage = savedInstanceState.getDouble("voltage");
 
 		/* Set GlobalState values */
+		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
+		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
 		CEToolboxActivity.fragmentData.setDiameter(diameter);
+		CEToolboxActivity.fragmentData.setPressure(pressure);
+		CEToolboxActivity.fragmentData.setPressureSpinPosition(pressureSpin
+				.getSelectedItemPosition());
 		CEToolboxActivity.fragmentData.setDuration(duration);
 		CEToolboxActivity.fragmentData.setViscosity(viscosity);
-		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
-		CEToolboxActivity.fragmentData.setPressure(pressure);
-		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
 		CEToolboxActivity.fragmentData.setConcentration(concentration);
+		CEToolboxActivity.fragmentData
+				.setConcentrationSpinPosition(concentrationSpin
+						.getSelectedItemPosition());
 		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
 	}
 
@@ -178,17 +187,43 @@ public class ExpertActivity extends Activity implements
 	public void onResume() {
 		super.onResume();
 
-		diameter = CEToolboxActivity.fragmentData.getDiameter();
-		duration = CEToolboxActivity.fragmentData.getDuration();
-		viscosity = CEToolboxActivity.fragmentData.getViscosity();
-		capillaryLength = CEToolboxActivity.fragmentData.getCapillaryLength();
-		pressure = CEToolboxActivity.fragmentData.getPressure();
-		toWindowLength = CEToolboxActivity.fragmentData.getToWindowLength();
-		concentration = CEToolboxActivity.fragmentData.getConcentration();
-		molecularWeight = CEToolboxActivity.fragmentData.getMolecularWeight();
+		getGlobalStateValues();
 
 		/* Initialize content */
 		editTextInitialize();
+	}
+
+	private void getGlobalStateValues() {
+		/* Get GlobalState values */
+		capillaryLength = CEToolboxActivity.fragmentData.getCapillaryLength();
+		toWindowLength = CEToolboxActivity.fragmentData.getToWindowLength();
+		diameter = CEToolboxActivity.fragmentData.getDiameter();
+		pressure = CEToolboxActivity.fragmentData.getPressure();
+		pressureSpinPosition = CEToolboxActivity.fragmentData
+				.getPressureSpinPosition();
+		duration = CEToolboxActivity.fragmentData.getDuration();
+		viscosity = CEToolboxActivity.fragmentData.getViscosity();
+		concentration = CEToolboxActivity.fragmentData.getConcentration();
+		concentrationSpinPosition = CEToolboxActivity.fragmentData
+				.getConcentrationSpinPosition();
+		molecularWeight = CEToolboxActivity.fragmentData.getMolecularWeight();
+
+	}
+
+	private void setGlobalStateValues() {
+		/* Set GlobalState values */
+		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
+		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
+		CEToolboxActivity.fragmentData.setDiameter(diameter);
+		CEToolboxActivity.fragmentData.setPressure(pressure);
+		CEToolboxActivity.fragmentData
+				.setPressureSpinPosition(pressureSpinPosition);
+		CEToolboxActivity.fragmentData.setDuration(duration);
+		CEToolboxActivity.fragmentData.setViscosity(viscosity);
+		CEToolboxActivity.fragmentData.setConcentration(concentration);
+		CEToolboxActivity.fragmentData
+				.setConcentrationSpinPosition(concentrationSpinPosition);
+		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
 	}
 
 	private void editTextInitialize() {
@@ -196,9 +231,11 @@ public class ExpertActivity extends Activity implements
 		diameterValue.setText(diameter.toString());
 		toWindowLengthValue.setText(toWindowLength.toString());
 		pressureValue.setText(pressure.toString());
+		pressureSpin.setSelection(pressureSpinPosition);
 		durationValue.setText(duration.toString());
 		viscosityValue.setText(viscosity.toString());
 		concentrationValue.setText(concentration.toString());
+		concentrationSpin.setSelection(concentrationSpinPosition);
 		molecularWeightValue.setText(molecularWeight.toString());
 		voltageValue.setText(voltage.toString());
 	}
@@ -207,17 +244,19 @@ public class ExpertActivity extends Activity implements
 	public void onClick(View view) {
 		if (view == calculate) {
 			boolean isFull = false;
+			Double pressureMBar;
+
 			/* Parameter validation */
 			diameter = Double.valueOf(diameterValue.getText().toString());
 			duration = Double.valueOf(durationValue.getText().toString());
 			viscosity = Double.valueOf(viscosityValue.getText().toString());
 			capillaryLength = Double.valueOf(capillaryLengthValue.getText()
 					.toString());
+			pressure = Double.valueOf(pressureValue.getText().toString());
 			if (pressureUnit.compareTo("psi") == 0) {
-				pressure = Double.valueOf(pressureValue.getText().toString()) * 6894.8 / 100;
-				;
+				pressureMBar = pressure * 6894.8 / 100;
 			} else {
-				pressure = Double.valueOf(pressureValue.getText().toString());
+				pressureMBar = pressure;
 			}
 			toWindowLength = Double.valueOf(toWindowLengthValue.getText()
 					.toString());
@@ -231,24 +270,28 @@ public class ExpertActivity extends Activity implements
 			SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
 			SharedPreferences.Editor editor = preferences.edit();
 
-			editor.putLong("diameter", Double.doubleToLongBits(diameter));
-			editor.putLong("duration", Double.doubleToLongBits(duration));
-			editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
 			editor.putLong("capillaryLength",
 					Double.doubleToLongBits(capillaryLength));
-			editor.putLong("pressure", Double.doubleToLongBits(pressure));
 			editor.putLong("toWindowLength",
 					Double.doubleToLongBits(toWindowLength));
+			editor.putLong("diameter", Double.doubleToLongBits(diameter));
+			editor.putLong("pressure", Double.doubleToLongBits(pressure));
+			editor.putInt("pressureSpinPosition", pressureSpinPosition);
+			editor.putLong("duration", Double.doubleToLongBits(duration));
+			editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
 			editor.putLong("concentration",
 					Double.doubleToLongBits(concentration));
+			editor.putInt("concentrationSpinPosition",
+					concentrationSpinPosition);
 			editor.putLong("molecularWeight",
 					Double.doubleToLongBits(molecularWeight));
 			editor.putLong("voltage", Double.doubleToLongBits(voltage));
 			editor.commit();
 
-			capillary = new CapillaryElectrophoresis(pressure, diameter,
+			capillary = new CapillaryElectrophoresis(pressureMBar, diameter,
 					duration, viscosity, capillaryLength, toWindowLength,
 					concentration, molecularWeight);
+
 			DecimalFormat myFormatter = new DecimalFormat("#.##");
 			Double deliveredVolume = capillary.getDeliveredVolume(); /* nl */
 			Double capillaryVolume = capillary.getCapillaryVolume(); /* nl */
@@ -333,7 +376,7 @@ public class ExpertActivity extends Activity implements
 
 			TextView tvInjectionPressure = (TextView) expertDetailsView
 					.findViewById(R.id.injectionPressureValue);
-			tvInjectionPressure.setText(myFormatter.format(pressure * duration
+			tvInjectionPressure.setText(myFormatter.format(pressureMBar * duration
 					* 100 / 6894.8)
 					+ " psi.s");
 
@@ -345,8 +388,9 @@ public class ExpertActivity extends Activity implements
 
 			TextView tvFieldStrength = (TextView) expertDetailsView
 					.findViewById(R.id.fieldStrengthValue);
-			tvFieldStrength.setText(myFormatter
-					.format(30 * 1000 / capillaryLength) + " V/cm");
+			tvFieldStrength.setText(myFormatter.format(voltage
+					/ capillaryLength)
+					+ " V/cm");
 
 			if (isFull) {
 				TextView tvMessage = (TextView) expertDetailsView
@@ -366,6 +410,19 @@ public class ExpertActivity extends Activity implements
 			builder.show();
 
 		} else if (view == reset) {
+			/* Reset the values to default program settings */
+			capillaryLength = 100.0;
+			toWindowLength = 100.0;
+			diameter = 50.0;
+			pressure = 30.0;
+			pressureSpinPosition = 0;
+			duration = 10.0;
+			viscosity = 1.0;
+			concentration = 1.0;
+			concentrationSpinPosition = 0;
+			molecularWeight = 1000.0;
+			voltage = 30000.0;
+
 			editTextInitialize();
 		}
 	}
@@ -377,8 +434,10 @@ public class ExpertActivity extends Activity implements
 		if (parent == concentrationSpin) {
 			concentrationUnit = (String) concentrationSpin
 					.getItemAtPosition(position);
+			concentrationSpinPosition = position;
 		} else if (parent == pressureSpin) {
 			pressureUnit = (String) pressureSpin.getItemAtPosition(position);
+			pressureSpinPosition = position;
 		}
 	}
 
@@ -389,20 +448,24 @@ public class ExpertActivity extends Activity implements
 
 	@Override
 	public void onPause() {
+		CEToolboxActivity.fragmentData.setCapillaryLength(Double
+				.valueOf(capillaryLengthValue.getText().toString()));
+		CEToolboxActivity.fragmentData.setToWindowLength(Double
+				.valueOf(toWindowLengthValue.getText().toString()));
 		CEToolboxActivity.fragmentData.setDiameter(Double.valueOf(diameterValue
 				.getText().toString()));
+		CEToolboxActivity.fragmentData.setPressure(Double.valueOf(pressureValue
+				.getText().toString()));
+		CEToolboxActivity.fragmentData
+				.setPressureSpinPosition(pressureSpinPosition);
 		CEToolboxActivity.fragmentData.setDuration(Double.valueOf(durationValue
 				.getText().toString()));
 		CEToolboxActivity.fragmentData.setViscosity(Double
 				.valueOf(viscosityValue.getText().toString()));
-		CEToolboxActivity.fragmentData.setCapillaryLength(Double
-				.valueOf(capillaryLengthValue.getText().toString()));
-		CEToolboxActivity.fragmentData.setPressure(Double.valueOf(pressureValue
-				.getText().toString()));
-		CEToolboxActivity.fragmentData.setToWindowLength(Double
-				.valueOf(toWindowLengthValue.getText().toString()));
 		CEToolboxActivity.fragmentData.setConcentration(Double
 				.valueOf(concentrationValue.getText().toString()));
+		CEToolboxActivity.fragmentData
+				.setConcentrationSpinPosition(concentrationSpinPosition);
 		CEToolboxActivity.fragmentData.setMolecularWeight(Double
 				.valueOf(molecularWeightValue.getText().toString()));
 
@@ -411,20 +474,22 @@ public class ExpertActivity extends Activity implements
 
 	@Override
 	public void onSaveInstanceState(Bundle state) {
+		state.putDouble("capillaryLength",
+				Double.valueOf(capillaryLengthValue.getText().toString()));
+		state.putDouble("toWindowLength",
+				Double.valueOf(toWindowLengthValue.getText().toString()));
 		state.putDouble("diameter",
 				Double.valueOf(diameterValue.getText().toString()));
+		state.putDouble("pressure",
+				Double.valueOf(pressureValue.getText().toString()));
+		state.putInt("pressureSpinPosition", pressureSpinPosition);
 		state.putDouble("duration",
 				Double.valueOf(durationValue.getText().toString()));
 		state.putDouble("viscosity",
 				Double.valueOf(viscosityValue.getText().toString()));
-		state.putDouble("capillaryLength",
-				Double.valueOf(capillaryLengthValue.getText().toString()));
-		state.putDouble("pressure",
-				Double.valueOf(pressureValue.getText().toString()));
-		state.putDouble("toWindowLength",
-				Double.valueOf(toWindowLengthValue.getText().toString()));
 		state.putDouble("concentration",
 				Double.valueOf(concentrationValue.getText().toString()));
+		state.putInt("concentrationSpinPosition", concentrationSpinPosition);
 		state.putDouble("molecularWeight",
 				Double.valueOf(molecularWeightValue.getText().toString()));
 		state.putDouble("voltage",
@@ -432,10 +497,4 @@ public class ExpertActivity extends Activity implements
 
 		super.onSaveInstanceState(state);
 	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
-
 }

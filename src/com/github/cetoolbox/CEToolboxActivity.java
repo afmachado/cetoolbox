@@ -25,6 +25,7 @@ import android.widget.TabHost;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
+import com.github.cetoolbox.R;
 
 public class CEToolboxActivity extends TabActivity {
 
@@ -35,7 +36,7 @@ public class CEToolboxActivity extends TabActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		fragmentData = new GlobalState(); // Store data when switching tab
+		fragmentData = null;
 
 		TabHost tabHost = getTabHost(); // The activity TabHost
 		TabHost.TabSpec spec; // Reusable TabSpec for each tab
