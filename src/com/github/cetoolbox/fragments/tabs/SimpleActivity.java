@@ -226,128 +226,210 @@ public class SimpleActivity extends Activity implements
 		molecularWeightValue.setText(molecularWeight.toString());
 	}
 
+	/*
+	 * Validate the content of the EditText widget
+	 */
+	private String parseEditTextContent() {
+		String errorMessage = "";
+
+		/* Verify that no field are empty */
+		if (capillaryLengthValue.getText().length() == 0) {
+			errorMessage = "The capillary length field is empty.";
+		} else if (toWindowLengthValue.getText().length() == 0) {
+			errorMessage = "The length to window field is empty.";
+		} else if (diameterValue.getText().length() == 0) {
+			errorMessage = "The diameter field is empty.";
+		} else if (pressureValue.getText().length() == 0) {
+			errorMessage = "The pressure field is empty.";
+		} else if (durationValue.getText().length() == 0) {
+			errorMessage = "The duration field is empty.";
+		} else if (viscosityValue.getText().length() == 0) {
+			errorMessage = "The viscosity field is empty.";
+		} else if (concentrationValue.getText().length() == 0) {
+			errorMessage = "The concentration field is empty.";
+		} else if (molecularWeightValue.getText().length() == 0) {
+			errorMessage = "The molecular weight field is empty.";
+		}
+
+		if (errorMessage.length() == 0) {
+			if (Double.valueOf(capillaryLengthValue.getText().toString()) == 0) {
+				errorMessage = "The capillary length can not be null.";
+			} else if (Double.valueOf(toWindowLengthValue.getText().toString()) == 0) {
+				errorMessage = "The length to window can not be null.";
+			} else if (Double.valueOf(diameterValue.getText().toString()) == 0) {
+				errorMessage = "The diameter can not be null.";
+			} else if (Double.valueOf(pressureValue.getText().toString()) == 0) {
+				errorMessage = "The pressure can not be null.";
+			} else if (Double.valueOf(durationValue.getText().toString()) == 0) {
+				errorMessage = "The duration can not be null.";
+			} else if (Double.valueOf(viscosityValue.getText().toString()) == 0) {
+				errorMessage = "The viscoty can not be null.";
+			} else if (Double.valueOf(concentrationValue.getText().toString()) == 0) {
+				errorMessage = "The concentration can not be null.";
+			} else if (Double
+					.valueOf(molecularWeightValue.getText().toString()) == 0) {
+				errorMessage = "The molecular weight can not be null.";
+			}
+		}
+
+		return errorMessage;
+	}
+
 	@Override
 	public void onClick(View view) {
 		if (view == calculate) {
 			boolean isFull = false;
-			Double pressureMBar;
+			boolean validatedValues = false;
+			Double pressureMBar = 0.0;
+			String errorMessage;
 
-			/* Parameter validation */
-			diameter = Double.valueOf(diameterValue.getText().toString());
-			duration = Double.valueOf(durationValue.getText().toString());
-			viscosity = Double.valueOf(viscosityValue.getText().toString());
-			capillaryLength = Double.valueOf(capillaryLengthValue.getText()
-					.toString());
-			pressure = Double.valueOf(pressureValue.getText().toString());
-			if (pressureUnit.compareTo("psi") == 0) {
-				pressureMBar = pressure * 6894.8 / 100;
+			errorMessage = parseEditTextContent();
+			if (errorMessage.length() == 0) {
+				validatedValues = true;
+			}
+			if (validatedValues) {
+				/* Parameter validation */
+				diameter = Double.valueOf(diameterValue.getText().toString());
+				duration = Double.valueOf(durationValue.getText().toString());
+				viscosity = Double.valueOf(viscosityValue.getText().toString());
+				capillaryLength = Double.valueOf(capillaryLengthValue.getText()
+						.toString());
+				pressure = Double.valueOf(pressureValue.getText().toString());
+				if (pressureUnit.compareTo("psi") == 0) {
+					pressureMBar = pressure * 6894.8 / 100;
+				} else {
+					pressureMBar = pressure;
+				}
+				toWindowLength = Double.valueOf(toWindowLengthValue.getText()
+						.toString());
+				concentration = Double.valueOf(concentrationValue.getText()
+						.toString());
+				molecularWeight = Double.valueOf(molecularWeightValue.getText()
+						.toString());
+				/* Check the values for incoherence */
+				if (toWindowLength > capillaryLength) {
+					validatedValues = false;
+					errorMessage = "The length to window can not be greater than the capillary length";
+				}
+			}
+			if (validatedValues) {
+				/* If all is fine, save the data and compute */
+				SharedPreferences preferences = getSharedPreferences(
+						PREFS_NAME, 0);
+				SharedPreferences.Editor editor = preferences.edit();
+
+				editor.putLong("capillaryLength",
+						Double.doubleToLongBits(capillaryLength));
+				editor.putLong("toWindowLength",
+						Double.doubleToLongBits(toWindowLength));
+				editor.putLong("diameter", Double.doubleToLongBits(diameter));
+				editor.putLong("pressure", Double.doubleToLongBits(pressure));
+				editor.putInt("pressureSpinPosition", pressureSpinPosition);
+				editor.putLong("duration", Double.doubleToLongBits(duration));
+				editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
+				editor.putLong("concentration",
+						Double.doubleToLongBits(concentration));
+				editor.putInt("concentrationSpinPosition",
+						concentrationSpinPosition);
+				editor.putLong("molecularWeight",
+						Double.doubleToLongBits(molecularWeight));
+
+				editor.commit();
+
+				capillary = new CapillaryElectrophoresis(pressureMBar,
+						diameter, duration, viscosity, capillaryLength,
+						toWindowLength, concentration, molecularWeight);
+
+				DecimalFormat doubleDecimalFormat = new DecimalFormat("#.##");
+				Double deliveredVolume = capillary.getDeliveredVolume(); /* nl */
+				Double capillaryVolume = capillary.getCapillaryVolume(); /* nl */
+				if (deliveredVolume > capillaryVolume) {
+					deliveredVolume = capillaryVolume;
+					isFull = true;
+				}
+
+				/* Compute injected quantity of analyte */
+				Double analyteMass; /* ng */
+				Double analyteMol; /* mmol */
+				if (concentrationUnit.compareTo("g/L") == 0) {
+					analyteMass = deliveredVolume * concentration;
+					analyteMol = analyteMass / molecularWeight * 1000;
+				} else {
+					analyteMol = deliveredVolume * concentration;
+					analyteMass = analyteMol * molecularWeight / 1000;
+				}
+
+				Double plugLength = deliveredVolume / capillaryVolume * 100;
+
+				/* Build the result window */
+				LayoutInflater li = LayoutInflater.from(this);
+				View simpleDetailsView = li.inflate(R.layout.simpleresults,
+						null);
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+				builder.setView(simpleDetailsView);
+
+				TextView title = new TextView(this);
+				title.setText("Injection Details");
+				title.setTextSize(20);
+				title.setBackgroundColor(Color.DKGRAY);
+				title.setTextColor(Color.WHITE);
+				title.setPadding(10, 10, 10, 10);
+				title.setGravity(Gravity.CENTER);
+				builder.setCustomTitle(title);
+
+				TextView tvHydrodynamicInjection = (TextView) simpleDetailsView
+						.findViewById(R.id.hydrodynamicInjectionValue);
+				tvHydrodynamicInjection.setText(doubleDecimalFormat
+						.format(deliveredVolume) + " nl");
+				TextView tvCapillaryVolume = (TextView) simpleDetailsView
+						.findViewById(R.id.capillaryVolumeValue);
+				tvCapillaryVolume.setText(doubleDecimalFormat
+						.format(capillaryVolume) + " nl");
+				TextView tvPlugLength = (TextView) simpleDetailsView
+						.findViewById(R.id.plugLengthValue);
+				tvPlugLength.setText(doubleDecimalFormat.format(plugLength));
+				TextView tvInjectedAnalyte = (TextView) simpleDetailsView
+						.findViewById(R.id.injectedAnalyteValue);
+				tvInjectedAnalyte.setText(doubleDecimalFormat
+						.format(analyteMass)
+						+ " ng\n"
+						+ doubleDecimalFormat.format(analyteMol) + " pmol");
+
+				if (isFull) {
+					TextView tvMessage = (TextView) simpleDetailsView
+							.findViewById(R.id.simpleMessage);
+					tvMessage.setTextColor(Color.RED);
+					tvMessage.setTypeface(null, Typeface.BOLD);
+					tvMessage.setText("Warning: the capillary is full !");
+				}
+				builder.setNeutralButton("Close",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dlg, int sumthin) {
+								// do nothing – it will close on its own
+							}
+						});
+
+				builder.show();
 			} else {
-				pressureMBar = pressure;
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+				builder.setTitle("Error");
+				builder.setMessage(errorMessage);
+				builder.setIcon(R.drawable.ic_dialog_error);
+				builder.setNeutralButton("Close",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dlg, int sumthin) {
+								// do nothing – it will close on its own
+							}
+						});
+
+				builder.show();
 			}
-			toWindowLength = Double.valueOf(toWindowLengthValue.getText()
-					.toString());
-			concentration = Double.valueOf(concentrationValue.getText()
-					.toString());
-			molecularWeight = Double.valueOf(molecularWeightValue.getText()
-					.toString());
-
-			/* If all is fine, save the data and compute */
-			SharedPreferences preferences = getSharedPreferences(PREFS_NAME, 0);
-			SharedPreferences.Editor editor = preferences.edit();
-
-			editor.putLong("capillaryLength",
-					Double.doubleToLongBits(capillaryLength));
-			editor.putLong("toWindowLength",
-					Double.doubleToLongBits(toWindowLength));
-			editor.putLong("diameter", Double.doubleToLongBits(diameter));
-			editor.putLong("pressure", Double.doubleToLongBits(pressure));
-			editor.putInt("pressureSpinPosition", pressureSpinPosition);
-			editor.putLong("duration", Double.doubleToLongBits(duration));
-			editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
-			editor.putLong("concentration",
-					Double.doubleToLongBits(concentration));
-			editor.putInt("concentrationSpinPosition",
-					concentrationSpinPosition);
-			editor.putLong("molecularWeight",
-					Double.doubleToLongBits(molecularWeight));
-
-			editor.commit();
-
-			capillary = new CapillaryElectrophoresis(pressureMBar, diameter,
-					duration, viscosity, capillaryLength, toWindowLength,
-					concentration, molecularWeight);
-
-			DecimalFormat myFormatter = new DecimalFormat("#.##");
-			Double deliveredVolume = capillary.getDeliveredVolume(); /* nl */
-			Double capillaryVolume = capillary.getCapillaryVolume(); /* nl */
-			if (deliveredVolume > capillaryVolume) {
-				deliveredVolume = capillaryVolume;
-				isFull = true;
-			}
-
-			/* Compute injected quantity of analyte */
-			Double analyteMass; /* ng */
-			Double analyteMol; /* mmol */
-			if (concentrationUnit.compareTo("g/L") == 0) {
-				analyteMass = deliveredVolume * concentration;
-				analyteMol = analyteMass / molecularWeight * 1000;
-			} else {
-				analyteMol = deliveredVolume * concentration;
-				analyteMass = analyteMol * molecularWeight / 1000;
-			}
-
-			Double plugLength = deliveredVolume / capillaryVolume * 100;
-
-			/* Build the result window */
-			LayoutInflater li = LayoutInflater.from(this);
-			View simpleDetailsView = li.inflate(R.layout.simpleresults, null);
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-			builder.setView(simpleDetailsView);
-
-			TextView title = new TextView(this);
-			title.setText("Injection Details");
-			title.setTextSize(20);
-			title.setBackgroundColor(Color.DKGRAY);
-			title.setTextColor(Color.WHITE);
-			title.setPadding(10, 10, 10, 10);
-			title.setGravity(Gravity.CENTER);
-			builder.setCustomTitle(title);
-
-			TextView tvHydrodynamicInjection = (TextView) simpleDetailsView
-					.findViewById(R.id.hydrodynamicInjectionValue);
-			tvHydrodynamicInjection.setText(myFormatter.format(deliveredVolume)
-					+ " nl");
-			TextView tvCapillaryVolume = (TextView) simpleDetailsView
-					.findViewById(R.id.capillaryVolumeValue);
-			tvCapillaryVolume.setText(myFormatter.format(capillaryVolume)
-					+ " nl");
-			TextView tvPlugLength = (TextView) simpleDetailsView
-					.findViewById(R.id.plugLengthValue);
-			tvPlugLength.setText(myFormatter.format(plugLength));
-			TextView tvInjectedAnalyte = (TextView) simpleDetailsView
-					.findViewById(R.id.injectedAnalyteValue);
-			tvInjectedAnalyte.setText(myFormatter.format(analyteMass) + " ng\n"
-					+ myFormatter.format(analyteMol) + " pmol");
-
-			if (isFull) {
-				TextView tvMessage = (TextView) simpleDetailsView
-						.findViewById(R.id.simpleMessage);
-				tvMessage.setTextColor(Color.RED);
-				tvMessage.setTypeface(null, Typeface.BOLD);
-				tvMessage.setText("Warning: the capillary is full !");
-			}
-			builder.setNeutralButton("Close",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dlg, int sumthin) {
-							// do nothing – it will close on its own
-						}
-					});
-
-			builder.show();
-
 		} else if (view == reset) {
 			/* Reset the values to default program settings */
 			capillaryLength = 100.0;
@@ -386,50 +468,114 @@ public class SimpleActivity extends Activity implements
 	@Override
 	public void onPause() {
 		CEToolboxActivity.fragmentData = new GlobalState();
-		CEToolboxActivity.fragmentData.setCapillaryLength(Double
-				.valueOf(capillaryLengthValue.getText().toString()));
-		CEToolboxActivity.fragmentData.setToWindowLength(Double
-				.valueOf(toWindowLengthValue.getText().toString()));
-		CEToolboxActivity.fragmentData.setDiameter(Double.valueOf(diameterValue
-				.getText().toString()));
-		CEToolboxActivity.fragmentData.setPressure(Double.valueOf(pressureValue
-				.getText().toString()));
+		try {
+			CEToolboxActivity.fragmentData.setCapillaryLength(Double
+					.valueOf(capillaryLengthValue.getText().toString()));
+		} catch (Exception e) {
+			CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
+		}
+		try {
+			CEToolboxActivity.fragmentData.setToWindowLength(Double
+					.valueOf(toWindowLengthValue.getText().toString()));
+		} catch (Exception e) {
+			CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
+		}
+		try {
+			CEToolboxActivity.fragmentData.setDiameter(Double
+					.valueOf(diameterValue.getText().toString()));
+		} catch (Exception e) {
+			CEToolboxActivity.fragmentData.setDiameter(diameter);
+		}
+		try {
+			CEToolboxActivity.fragmentData.setPressure(Double
+					.valueOf(pressureValue.getText().toString()));
+		} catch (Exception e) {
+			CEToolboxActivity.fragmentData.setPressure(pressure);
+		}
 		CEToolboxActivity.fragmentData
 				.setPressureSpinPosition(pressureSpinPosition);
-		CEToolboxActivity.fragmentData.setDuration(Double.valueOf(durationValue
-				.getText().toString()));
-		CEToolboxActivity.fragmentData.setViscosity(Double
-				.valueOf(viscosityValue.getText().toString()));
-		CEToolboxActivity.fragmentData.setConcentration(Double
-				.valueOf(concentrationValue.getText().toString()));
+		try {
+			CEToolboxActivity.fragmentData.setDuration(Double
+					.valueOf(durationValue.getText().toString()));
+		} catch (Exception e) {
+			CEToolboxActivity.fragmentData.setDuration(duration);
+		}
+		try {
+			CEToolboxActivity.fragmentData.setViscosity(Double
+					.valueOf(viscosityValue.getText().toString()));
+		} catch (Exception e) {
+			CEToolboxActivity.fragmentData.setViscosity(viscosity);
+		}
+		try {
+			CEToolboxActivity.fragmentData.setConcentration(Double
+					.valueOf(concentrationValue.getText().toString()));
+		} catch (Exception e) {
+			CEToolboxActivity.fragmentData.setConcentration(concentration);
+		}
 		CEToolboxActivity.fragmentData
 				.setConcentrationSpinPosition(concentrationSpinPosition);
-		CEToolboxActivity.fragmentData.setMolecularWeight(Double
-				.valueOf(molecularWeightValue.getText().toString()));
+		try {
+			CEToolboxActivity.fragmentData.setMolecularWeight(Double
+					.valueOf(molecularWeightValue.getText().toString()));
+		} catch (Exception e) {
+			CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
+		}
 
 		super.onPause();
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle state) {
-		state.putDouble("capillaryLength",
-				Double.valueOf(capillaryLengthValue.getText().toString()));
-		state.putDouble("toWindowLength",
-				Double.valueOf(toWindowLengthValue.getText().toString()));
-		state.putDouble("diameter",
-				Double.valueOf(diameterValue.getText().toString()));
-		state.putDouble("pressure",
-				Double.valueOf(pressureValue.getText().toString()));
+		try {
+			state.putDouble("capillaryLength",
+					Double.valueOf(capillaryLengthValue.getText().toString()));
+		} catch (Exception e) {
+			state.putDouble("capillaryLength", capillaryLength);
+		}
+		try {
+			state.putDouble("toWindowLength",
+					Double.valueOf(toWindowLengthValue.getText().toString()));
+		} catch (Exception e) {
+			state.putDouble("toWindowLength", toWindowLength);
+		}
+		try {
+			state.putDouble("diameter",
+					Double.valueOf(diameterValue.getText().toString()));
+		} catch (Exception e) {
+			state.putDouble("diameter", diameter);
+		}
+		try {
+			state.putDouble("pressure",
+					Double.valueOf(pressureValue.getText().toString()));
+		} catch (Exception e) {
+			state.putDouble("pressure", pressure);
+		}
 		state.putInt("pressureSpinPosition", pressureSpinPosition);
-		state.putDouble("duration",
-				Double.valueOf(durationValue.getText().toString()));
-		state.putDouble("viscosity",
-				Double.valueOf(viscosityValue.getText().toString()));
-		state.putDouble("concentration",
-				Double.valueOf(concentrationValue.getText().toString()));
+		try {
+			state.putDouble("duration",
+					Double.valueOf(durationValue.getText().toString()));
+		} catch (Exception e) {
+			state.putDouble("duration", duration);
+		}
+		try {
+			state.putDouble("viscosity",
+					Double.valueOf(viscosityValue.getText().toString()));
+		} catch (Exception e) {
+			state.putDouble("viscosity", viscosity);
+		}
+		try {
+			state.putDouble("concentration",
+					Double.valueOf(concentrationValue.getText().toString()));
+		} catch (Exception e) {
+			state.putDouble("concentration", concentration);
+		}
 		state.putInt("concentrationSpinPosition", concentrationSpinPosition);
-		state.putDouble("molecularWeight",
-				Double.valueOf(molecularWeightValue.getText().toString()));
+		try {
+			state.putDouble("molecularWeight",
+					Double.valueOf(molecularWeightValue.getText().toString()));
+		} catch (Exception e) {
+			state.putDouble("molecularWeight", molecularWeight);
+		}
 
 		super.onSaveInstanceState(state);
 	}
