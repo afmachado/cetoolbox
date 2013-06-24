@@ -396,6 +396,17 @@ img.headlogo {
   padding-top: 40px;
 }
 
+img.screenshot {
+  position: relative;
+  width: 280px;
+  height: auto;
+  padding: 0;
+  margin: 0px 10px 0px 10px;
+  border: 0px;
+  background: none;
+  box-shadow: none;
+}
+
 img.logo {
   position: relative;
   width: auto;
