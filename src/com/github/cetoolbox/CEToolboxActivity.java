@@ -16,8 +16,11 @@
 package com.github.cetoolbox;
 
 import com.github.cetoolbox.fragments.tabs.AboutActivity;
-import com.github.cetoolbox.fragments.tabs.ExpertActivity;
-import com.github.cetoolbox.fragments.tabs.SimpleActivity;
+import com.github.cetoolbox.fragments.tabs.ConductivityActivity;
+import com.github.cetoolbox.fragments.tabs.FlowrateActivity;
+import com.github.cetoolbox.fragments.tabs.InjectionActivity;
+import com.github.cetoolbox.fragments.tabs.MobilityActivity;
+import com.github.cetoolbox.fragments.tabs.ViscosityActivity;
 import com.github.cetoolbox.GlobalState;
 import android.os.Bundle;
 import android.app.TabActivity;

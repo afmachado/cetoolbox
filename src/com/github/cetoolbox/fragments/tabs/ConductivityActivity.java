@@ -99,18 +99,18 @@ public class ConductivityActivity extends Activity implements
 		concentrationSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> concentrationUnitsAdapter = ArrayAdapter
 				.createFromResource(this, R.array.concentrationUnitArray,
-						android.R.layout.conductivity_spinner_item);
+						android.R.layout.simple_spinner_item);
 		concentrationUnitsAdapter
-				.setDropDownViewResource(android.R.layout.conductivity_spinner_dropdown_item);
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		concentrationSpin.setAdapter(concentrationUnitsAdapter);
 
 		pressureSpin = (Spinner) findViewById(R.id.pressureSpin);
 		pressureSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> pressureUnitsAdapter = ArrayAdapter
 				.createFromResource(this, R.array.pressureUnitArray,
-						android.R.layout.conductivity_spinner_item);
+						android.R.layout.simple_spinner_item);
 		pressureUnitsAdapter
-				.setDropDownViewResource(android.R.layout.conductivity_spinner_dropdown_item);
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		pressureSpin.setAdapter(pressureUnitsAdapter);
 
 		calculate = (Button) findViewById(R.id.button1);

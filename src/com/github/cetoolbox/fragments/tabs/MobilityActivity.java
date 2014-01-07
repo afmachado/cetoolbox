@@ -50,7 +50,7 @@ public class MobilityActivity extends Activity implements
 	EditText diameterValue;
 	EditText pressureValue;
 	EditText durationValue;
-	EditText mobilityValue;
+	EditText viscosityValue;
 	EditText toWindowLengthValue;
 	EditText concentrationValue;
 	EditText molecularWeightValue;
@@ -68,7 +68,7 @@ public class MobilityActivity extends Activity implements
 	Double pressure;
 	String pressureUnit;
 	Double duration;
-	Double mobility;
+	Double viscosity;
 	Double concentration;
 	String concentrationUnit;
 	Double molecularWeight;
@@ -92,25 +92,25 @@ public class MobilityActivity extends Activity implements
 		toWindowLengthValue = (EditText) findViewById(R.id.toWindowLengthValue);
 		pressureValue = (EditText) findViewById(R.id.pressureValue);
 		durationValue = (EditText) findViewById(R.id.durationValue);
-		mobilityValue = (EditText) findViewById(R.id.mobilityValue);
+		viscosityValue = (EditText) findViewById(R.id.viscosityValue);
 		concentrationValue = (EditText) findViewById(R.id.concentrationValue);
 		molecularWeightValue = (EditText) findViewById(R.id.molecularWeightValue);
 		concentrationSpin = (Spinner) findViewById(R.id.concentrationSpin);
 		concentrationSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> concentrationUnitsAdapter = ArrayAdapter
 				.createFromResource(this, R.array.concentrationUnitArray,
-						android.R.layout.mobility_spinner_item);
+						android.R.layout.simple_spinner_item);
 		concentrationUnitsAdapter
-				.setDropDownViewResource(android.R.layout.mobility_spinner_dropdown_item);
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		concentrationSpin.setAdapter(concentrationUnitsAdapter);
 
 		pressureSpin = (Spinner) findViewById(R.id.pressureSpin);
 		pressureSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> pressureUnitsAdapter = ArrayAdapter
 				.createFromResource(this, R.array.pressureUnitArray,
-						android.R.layout.mobility_spinner_item);
+						android.R.layout.simple_spinner_item);
 		pressureUnitsAdapter
-				.setDropDownViewResource(android.R.layout.mobility_spinner_dropdown_item);
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		pressureSpin.setAdapter(pressureUnitsAdapter);
 
 		calculate = (Button) findViewById(R.id.button1);
@@ -131,7 +131,7 @@ public class MobilityActivity extends Activity implements
 		pressureSpinPosition = settings.getInt("pressureSpinPosition", 0);
 		duration = Double.longBitsToDouble(settings.getLong("duration",
 				Double.doubleToLongBits(10.0)));
-		mobility = Double.longBitsToDouble(settings.getLong("mobility",
+		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
 				Double.doubleToLongBits(1.0)));
 		concentration = Double.longBitsToDouble(settings.getLong(
 				"concentration", Double.doubleToLongBits(1.0)));
@@ -159,7 +159,7 @@ public class MobilityActivity extends Activity implements
 		pressureSpinPosition = savedInstanceState
 				.getInt("pressureSpinPosition");
 		duration = savedInstanceState.getDouble("duration");
-		mobility = savedInstanceState.getDouble("mobility");
+		viscosity = savedInstanceState.getDouble("viscosity");
 		concentration = savedInstanceState.getDouble("concentration");
 		concentrationSpinPosition = savedInstanceState
 				.getInt("concentrationSpinPosition");
@@ -189,7 +189,7 @@ public class MobilityActivity extends Activity implements
 		pressureSpinPosition = CEToolboxActivity.fragmentData
 				.getPressureSpinPosition();
 		duration = CEToolboxActivity.fragmentData.getDuration();
-		mobility = CEToolboxActivity.fragmentData.getMobility();
+		viscosity = CEToolboxActivity.fragmentData.getViscosity();
 		concentration = CEToolboxActivity.fragmentData.getConcentration();
 		concentrationSpinPosition = CEToolboxActivity.fragmentData
 				.getConcentrationSpinPosition();
@@ -206,7 +206,7 @@ public class MobilityActivity extends Activity implements
 		CEToolboxActivity.fragmentData
 				.setPressureSpinPosition(pressureSpinPosition);
 		CEToolboxActivity.fragmentData.setDuration(duration);
-		CEToolboxActivity.fragmentData.setMobility(mobility);
+		CEToolboxActivity.fragmentData.setViscosity(viscosity);
 		CEToolboxActivity.fragmentData.setConcentration(concentration);
 		CEToolboxActivity.fragmentData
 				.setConcentrationSpinPosition(concentrationSpinPosition);
@@ -220,7 +220,7 @@ public class MobilityActivity extends Activity implements
 		pressureValue.setText(pressure.toString());
 		pressureSpin.setSelection(pressureSpinPosition);
 		durationValue.setText(duration.toString());
-		mobilityValue.setText(mobility.toString());
+		viscosityValue.setText(viscosity.toString());
 		concentrationValue.setText(concentration.toString());
 		concentrationSpin.setSelection(concentrationSpinPosition);
 		molecularWeightValue.setText(molecularWeight.toString());
@@ -243,8 +243,8 @@ public class MobilityActivity extends Activity implements
 			errorMessage = "The pressure field is empty.";
 		} else if (durationValue.getText().length() == 0) {
 			errorMessage = "The duration field is empty.";
-		} else if (mobilityValue.getText().length() == 0) {
-			errorMessage = "The mobility field is empty.";
+		} else if (viscosityValue.getText().length() == 0) {
+			errorMessage = "The viscosity field is empty.";
 		} else if (concentrationValue.getText().length() == 0) {
 			errorMessage = "The concentration field is empty.";
 		} else if (molecularWeightValue.getText().length() == 0) {
@@ -262,7 +262,7 @@ public class MobilityActivity extends Activity implements
 				errorMessage = "The pressure can not be null.";
 			} else if (Double.valueOf(durationValue.getText().toString()) == 0) {
 				errorMessage = "The duration can not be null.";
-			} else if (Double.valueOf(mobilityValue.getText().toString()) == 0) {
+			} else if (Double.valueOf(viscosityValue.getText().toString()) == 0) {
 				errorMessage = "The viscoty can not be null.";
 			} else if (Double.valueOf(concentrationValue.getText().toString()) == 0) {
 				errorMessage = "The concentration can not be null.";
@@ -291,7 +291,7 @@ public class MobilityActivity extends Activity implements
 				/* Parameter validation */
 				diameter = Double.valueOf(diameterValue.getText().toString());
 				duration = Double.valueOf(durationValue.getText().toString());
-				mobility = Double.valueOf(mobilityValue.getText().toString());
+				viscosity = Double.valueOf(viscosityValue.getText().toString());
 				capillaryLength = Double.valueOf(capillaryLengthValue.getText()
 						.toString());
 				pressure = Double.valueOf(pressureValue.getText().toString());
@@ -326,7 +326,7 @@ public class MobilityActivity extends Activity implements
 				editor.putLong("pressure", Double.doubleToLongBits(pressure));
 				editor.putInt("pressureSpinPosition", pressureSpinPosition);
 				editor.putLong("duration", Double.doubleToLongBits(duration));
-				editor.putLong("mobility", Double.doubleToLongBits(mobility));
+				editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
 				editor.putLong("concentration",
 						Double.doubleToLongBits(concentration));
 				editor.putInt("concentrationSpinPosition",
@@ -337,7 +337,7 @@ public class MobilityActivity extends Activity implements
 				editor.commit();
 
 				capillary = new CapillaryElectrophoresis(pressureMBar,
-						diameter, duration, mobility, capillaryLength,
+						diameter, duration, viscosity, capillaryLength,
 						toWindowLength, concentration, molecularWeight);
 
 				DecimalFormat doubleDecimalFormat = new DecimalFormat("#.##");
@@ -438,7 +438,7 @@ public class MobilityActivity extends Activity implements
 			pressure = 30.0;
 			pressureSpinPosition = 0;
 			duration = 10.0;
-			mobility = 1.0;
+			viscosity = 1.0;
 			concentration = 1.0;
 			concentrationSpinPosition = 0;
 			molecularWeight = 1000.0;
@@ -501,10 +501,10 @@ public class MobilityActivity extends Activity implements
 			CEToolboxActivity.fragmentData.setDuration(duration);
 		}
 		try {
-			CEToolboxActivity.fragmentData.setMobility(Double
-					.valueOf(mobilityValue.getText().toString()));
+			CEToolboxActivity.fragmentData.setViscosity(Double
+					.valueOf(viscosityValue.getText().toString()));
 		} catch (Exception e) {
-			CEToolboxActivity.fragmentData.setMobility(mobility);
+			CEToolboxActivity.fragmentData.setViscosity(viscosity);
 		}
 		try {
 			CEToolboxActivity.fragmentData.setConcentration(Double
@@ -558,10 +558,10 @@ public class MobilityActivity extends Activity implements
 			state.putDouble("duration", duration);
 		}
 		try {
-			state.putDouble("mobility",
-					Double.valueOf(mobilityValue.getText().toString()));
+			state.putDouble("viscosity",
+					Double.valueOf(viscosityValue.getText().toString()));
 		} catch (Exception e) {
-			state.putDouble("mobility", mobility);
+			state.putDouble("viscosity", viscosity);
 		}
 		try {
 			state.putDouble("concentration",
