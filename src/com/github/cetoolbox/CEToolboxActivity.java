@@ -51,21 +51,56 @@ public class CEToolboxActivity extends TabActivity {
 			/* .setClass(this, CEToolboxSimpleActivity.class); */
 			spec = tabHost.newTabSpec("simple");
 			spec.setContent(intent);
-			spec.setIndicator("Simple");
+			spec.setIndicator("Injection");
 			tabHost.addTab(spec);
 
 			intent = new Intent(this.getBaseContext(), ExpertActivity.class);
 			spec = tabHost.newTabSpec("expert");
 			spec.setContent(intent);
-			spec.setIndicator("Expert");
+			spec.setIndicator("Viscosity");
 			tabHost.addTab(spec);
 
 			intent = new Intent(this.getBaseContext(), AboutActivity.class);
-			spec = tabHost.newTabSpec("about");
+			spec = tabHost.newTabSpec("conductivity");
+			spec.setContent(intent);
+			spec.setIndicator("Conductivity");
+			tabHost.addTab(spec);
+
+			intent = new Intent(this.getBaseContext(), AboutActivity.class);
+			spec = tabHost.newTabSpec("flow");
+			spec.setContent(intent);
+			spec.setIndicator("Flow");
+			tabHost.addTab(spec);
+
+			intent = new Intent(this.getBaseContext(), AboutActivity.class);
+			spec = tabHost.newTabSpec("About");
 			spec.setContent(intent);
 			spec.setIndicator("About");
 			tabHost.addTab(spec);
 
+			/* width = number of letters * 10 + 10 */
+			int displayWidth = getWindowManager().getDefaultDisplay()
+					.getWidth();
+			int defaultTabWidth = 100;
+			/* defaultTabWidth = tabHost.get */
+			if ((defaultTabWidth * tabHost.getTabWidget().getChildCount()) < displayWidth) {
+				defaultTabWidth = (int) Math.ceil(displayWidth
+						/ tabHost.getTabWidget().getChildCount());
+
+			}
+
+			for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+				tabHost.getTabWidget().getChildAt(i).getLayoutParams().width = defaultTabWidth;
+			}
+
+			/*
+			 * tabHost.getTabWidget().getChildAt(1).getLayoutParams().width =
+			 * 70; tabHost.getTabWidget().getChildAt(2).getLayoutParams().width
+			 * = 60;
+			 * tabHost.getTabWidget().getChildAt(3).getLayoutParams().width =
+			 * 160; tabHost.getTabWidget().getChildAt(4).getLayoutParams().width
+			 * = 160;
+			 */
 			tabHost.setCurrentTab(0);
 		} catch (ActivityNotFoundException e) {
 			/* e.printStackTrace(); */
