@@ -39,7 +39,7 @@ import com.github.cetoolbox.CapillaryElectrophoresis;
 import com.github.cetoolbox.GlobalState;
 import com.github.cetoolbox.R;
 
-public class SimpleActivity extends Activity implements
+public class MobilityActivity extends Activity implements
 		AdapterView.OnItemSelectedListener, View.OnClickListener {
 
 	public static final String PREFS_NAME = "capillary.electrophoresis.toolbox.PREFERENCE_FILE_KEY";
@@ -50,7 +50,7 @@ public class SimpleActivity extends Activity implements
 	EditText diameterValue;
 	EditText pressureValue;
 	EditText durationValue;
-	EditText viscosityValue;
+	EditText mobilityValue;
 	EditText toWindowLengthValue;
 	EditText concentrationValue;
 	EditText molecularWeightValue;
@@ -68,7 +68,7 @@ public class SimpleActivity extends Activity implements
 	Double pressure;
 	String pressureUnit;
 	Double duration;
-	Double viscosity;
+	Double mobility;
 	Double concentration;
 	String concentrationUnit;
 	Double molecularWeight;
@@ -85,32 +85,32 @@ public class SimpleActivity extends Activity implements
 		config.locale = locale;
 		getBaseContext().getResources().updateConfiguration(config,
 				getBaseContext().getResources().getDisplayMetrics());
-		this.setContentView(R.layout.simple);
+		this.setContentView(R.layout.mobility);
 
 		capillaryLengthValue = (EditText) findViewById(R.id.capillaryLengthValue);
 		diameterValue = (EditText) findViewById(R.id.diameterValue);
 		toWindowLengthValue = (EditText) findViewById(R.id.toWindowLengthValue);
 		pressureValue = (EditText) findViewById(R.id.pressureValue);
 		durationValue = (EditText) findViewById(R.id.durationValue);
-		viscosityValue = (EditText) findViewById(R.id.viscosityValue);
+		mobilityValue = (EditText) findViewById(R.id.mobilityValue);
 		concentrationValue = (EditText) findViewById(R.id.concentrationValue);
 		molecularWeightValue = (EditText) findViewById(R.id.molecularWeightValue);
 		concentrationSpin = (Spinner) findViewById(R.id.concentrationSpin);
 		concentrationSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> concentrationUnitsAdapter = ArrayAdapter
 				.createFromResource(this, R.array.concentrationUnitArray,
-						android.R.layout.simple_spinner_item);
+						android.R.layout.mobility_spinner_item);
 		concentrationUnitsAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				.setDropDownViewResource(android.R.layout.mobility_spinner_dropdown_item);
 		concentrationSpin.setAdapter(concentrationUnitsAdapter);
 
 		pressureSpin = (Spinner) findViewById(R.id.pressureSpin);
 		pressureSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> pressureUnitsAdapter = ArrayAdapter
 				.createFromResource(this, R.array.pressureUnitArray,
-						android.R.layout.simple_spinner_item);
+						android.R.layout.mobility_spinner_item);
 		pressureUnitsAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				.setDropDownViewResource(android.R.layout.mobility_spinner_dropdown_item);
 		pressureSpin.setAdapter(pressureUnitsAdapter);
 
 		calculate = (Button) findViewById(R.id.button1);
@@ -131,7 +131,7 @@ public class SimpleActivity extends Activity implements
 		pressureSpinPosition = settings.getInt("pressureSpinPosition", 0);
 		duration = Double.longBitsToDouble(settings.getLong("duration",
 				Double.doubleToLongBits(10.0)));
-		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
+		mobility = Double.longBitsToDouble(settings.getLong("mobility",
 				Double.doubleToLongBits(1.0)));
 		concentration = Double.longBitsToDouble(settings.getLong(
 				"concentration", Double.doubleToLongBits(1.0)));
@@ -159,7 +159,7 @@ public class SimpleActivity extends Activity implements
 		pressureSpinPosition = savedInstanceState
 				.getInt("pressureSpinPosition");
 		duration = savedInstanceState.getDouble("duration");
-		viscosity = savedInstanceState.getDouble("viscosity");
+		mobility = savedInstanceState.getDouble("mobility");
 		concentration = savedInstanceState.getDouble("concentration");
 		concentrationSpinPosition = savedInstanceState
 				.getInt("concentrationSpinPosition");
@@ -189,7 +189,7 @@ public class SimpleActivity extends Activity implements
 		pressureSpinPosition = CEToolboxActivity.fragmentData
 				.getPressureSpinPosition();
 		duration = CEToolboxActivity.fragmentData.getDuration();
-		viscosity = CEToolboxActivity.fragmentData.getViscosity();
+		mobility = CEToolboxActivity.fragmentData.getMobility();
 		concentration = CEToolboxActivity.fragmentData.getConcentration();
 		concentrationSpinPosition = CEToolboxActivity.fragmentData
 				.getConcentrationSpinPosition();
@@ -206,7 +206,7 @@ public class SimpleActivity extends Activity implements
 		CEToolboxActivity.fragmentData
 				.setPressureSpinPosition(pressureSpinPosition);
 		CEToolboxActivity.fragmentData.setDuration(duration);
-		CEToolboxActivity.fragmentData.setViscosity(viscosity);
+		CEToolboxActivity.fragmentData.setMobility(mobility);
 		CEToolboxActivity.fragmentData.setConcentration(concentration);
 		CEToolboxActivity.fragmentData
 				.setConcentrationSpinPosition(concentrationSpinPosition);
@@ -220,7 +220,7 @@ public class SimpleActivity extends Activity implements
 		pressureValue.setText(pressure.toString());
 		pressureSpin.setSelection(pressureSpinPosition);
 		durationValue.setText(duration.toString());
-		viscosityValue.setText(viscosity.toString());
+		mobilityValue.setText(mobility.toString());
 		concentrationValue.setText(concentration.toString());
 		concentrationSpin.setSelection(concentrationSpinPosition);
 		molecularWeightValue.setText(molecularWeight.toString());
@@ -243,8 +243,8 @@ public class SimpleActivity extends Activity implements
 			errorMessage = "The pressure field is empty.";
 		} else if (durationValue.getText().length() == 0) {
 			errorMessage = "The duration field is empty.";
-		} else if (viscosityValue.getText().length() == 0) {
-			errorMessage = "The viscosity field is empty.";
+		} else if (mobilityValue.getText().length() == 0) {
+			errorMessage = "The mobility field is empty.";
 		} else if (concentrationValue.getText().length() == 0) {
 			errorMessage = "The concentration field is empty.";
 		} else if (molecularWeightValue.getText().length() == 0) {
@@ -262,7 +262,7 @@ public class SimpleActivity extends Activity implements
 				errorMessage = "The pressure can not be null.";
 			} else if (Double.valueOf(durationValue.getText().toString()) == 0) {
 				errorMessage = "The duration can not be null.";
-			} else if (Double.valueOf(viscosityValue.getText().toString()) == 0) {
+			} else if (Double.valueOf(mobilityValue.getText().toString()) == 0) {
 				errorMessage = "The viscoty can not be null.";
 			} else if (Double.valueOf(concentrationValue.getText().toString()) == 0) {
 				errorMessage = "The concentration can not be null.";
@@ -291,7 +291,7 @@ public class SimpleActivity extends Activity implements
 				/* Parameter validation */
 				diameter = Double.valueOf(diameterValue.getText().toString());
 				duration = Double.valueOf(durationValue.getText().toString());
-				viscosity = Double.valueOf(viscosityValue.getText().toString());
+				mobility = Double.valueOf(mobilityValue.getText().toString());
 				capillaryLength = Double.valueOf(capillaryLengthValue.getText()
 						.toString());
 				pressure = Double.valueOf(pressureValue.getText().toString());
@@ -326,7 +326,7 @@ public class SimpleActivity extends Activity implements
 				editor.putLong("pressure", Double.doubleToLongBits(pressure));
 				editor.putInt("pressureSpinPosition", pressureSpinPosition);
 				editor.putLong("duration", Double.doubleToLongBits(duration));
-				editor.putLong("viscosity", Double.doubleToLongBits(viscosity));
+				editor.putLong("mobility", Double.doubleToLongBits(mobility));
 				editor.putLong("concentration",
 						Double.doubleToLongBits(concentration));
 				editor.putInt("concentrationSpinPosition",
@@ -337,7 +337,7 @@ public class SimpleActivity extends Activity implements
 				editor.commit();
 
 				capillary = new CapillaryElectrophoresis(pressureMBar,
-						diameter, duration, viscosity, capillaryLength,
+						diameter, duration, mobility, capillaryLength,
 						toWindowLength, concentration, molecularWeight);
 
 				DecimalFormat doubleDecimalFormat = new DecimalFormat("#.##");
@@ -363,12 +363,12 @@ public class SimpleActivity extends Activity implements
 
 				/* Build the result window */
 				LayoutInflater li = LayoutInflater.from(this);
-				View simpleDetailsView = li.inflate(R.layout.simpleresults,
+				View mobilityDetailsView = li.inflate(R.layout.mobilityresults,
 						null);
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-				builder.setView(simpleDetailsView);
+				builder.setView(mobilityDetailsView);
 
 				TextView title = new TextView(this);
 				title.setText("Injection Details");
@@ -379,18 +379,18 @@ public class SimpleActivity extends Activity implements
 				title.setGravity(Gravity.CENTER);
 				builder.setCustomTitle(title);
 
-				TextView tvHydrodynamicInjection = (TextView) simpleDetailsView
+				TextView tvHydrodynamicInjection = (TextView) mobilityDetailsView
 						.findViewById(R.id.hydrodynamicInjectionValue);
 				tvHydrodynamicInjection.setText(doubleDecimalFormat
 						.format(deliveredVolume) + " nl");
-				TextView tvCapillaryVolume = (TextView) simpleDetailsView
+				TextView tvCapillaryVolume = (TextView) mobilityDetailsView
 						.findViewById(R.id.capillaryVolumeValue);
 				tvCapillaryVolume.setText(doubleDecimalFormat
 						.format(capillaryVolume) + " nl");
-				TextView tvPlugLength = (TextView) simpleDetailsView
+				TextView tvPlugLength = (TextView) mobilityDetailsView
 						.findViewById(R.id.plugLengthValue);
 				tvPlugLength.setText(doubleDecimalFormat.format(plugLength));
-				TextView tvInjectedAnalyte = (TextView) simpleDetailsView
+				TextView tvInjectedAnalyte = (TextView) mobilityDetailsView
 						.findViewById(R.id.injectedAnalyteValue);
 				tvInjectedAnalyte.setText(doubleDecimalFormat
 						.format(analyteMass)
@@ -398,8 +398,8 @@ public class SimpleActivity extends Activity implements
 						+ doubleDecimalFormat.format(analyteMol) + " pmol");
 
 				if (isFull) {
-					TextView tvMessage = (TextView) simpleDetailsView
-							.findViewById(R.id.simpleMessage);
+					TextView tvMessage = (TextView) mobilityDetailsView
+							.findViewById(R.id.mobilityMessage);
 					tvMessage.setTextColor(Color.RED);
 					tvMessage.setTypeface(null, Typeface.BOLD);
 					tvMessage.setText("Warning: the capillary is full !");
@@ -438,7 +438,7 @@ public class SimpleActivity extends Activity implements
 			pressure = 30.0;
 			pressureSpinPosition = 0;
 			duration = 10.0;
-			viscosity = 1.0;
+			mobility = 1.0;
 			concentration = 1.0;
 			concentrationSpinPosition = 0;
 			molecularWeight = 1000.0;
@@ -501,10 +501,10 @@ public class SimpleActivity extends Activity implements
 			CEToolboxActivity.fragmentData.setDuration(duration);
 		}
 		try {
-			CEToolboxActivity.fragmentData.setViscosity(Double
-					.valueOf(viscosityValue.getText().toString()));
+			CEToolboxActivity.fragmentData.setMobility(Double
+					.valueOf(mobilityValue.getText().toString()));
 		} catch (Exception e) {
-			CEToolboxActivity.fragmentData.setViscosity(viscosity);
+			CEToolboxActivity.fragmentData.setMobility(mobility);
 		}
 		try {
 			CEToolboxActivity.fragmentData.setConcentration(Double
@@ -558,10 +558,10 @@ public class SimpleActivity extends Activity implements
 			state.putDouble("duration", duration);
 		}
 		try {
-			state.putDouble("viscosity",
-					Double.valueOf(viscosityValue.getText().toString()));
+			state.putDouble("mobility",
+					Double.valueOf(mobilityValue.getText().toString()));
 		} catch (Exception e) {
-			state.putDouble("viscosity", viscosity);
+			state.putDouble("mobility", mobility);
 		}
 		try {
 			state.putDouble("concentration",

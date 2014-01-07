@@ -43,37 +43,38 @@ public class CEToolboxActivity extends TabActivity {
 		Intent intent; // Reusable Intent for each tab
 		Resources res = getResources();
 		try {
-			intent = new Intent(this.getBaseContext(), SimpleActivity.class);
-			/*
-			 * intent.setClassName("proteomics.mobile.workbench",
-			 * "CEToolboxSimpleActivity");
-			 */
-			/* .setClass(this, CEToolboxSimpleActivity.class); */
-			spec = tabHost.newTabSpec("simple");
+			intent = new Intent(this.getBaseContext(), InjectionActivity.class);
+			spec = tabHost.newTabSpec("injection");
 			spec.setContent(intent);
 			spec.setIndicator("Injection");
 			tabHost.addTab(spec);
 
-			intent = new Intent(this.getBaseContext(), ExpertActivity.class);
-			spec = tabHost.newTabSpec("expert");
+			intent = new Intent(this.getBaseContext(), ConductivityActivity.class);
+			spec = tabHost.newTabSpec("Conductivity");
+			spec.setContent(intent);
+			spec.setIndicator("Conductivity");
+			tabHost.addTab(spec);
+
+			intent = new Intent(this.getBaseContext(), FlowrateActivity.class);
+			spec = tabHost.newTabSpec("flowrate");
+			spec.setContent(intent);
+			spec.setIndicator("Flowrate");
+			tabHost.addTab(spec);
+
+			intent = new Intent(this.getBaseContext(), MobilityActivity.class);
+			spec = tabHost.newTabSpec("mobility");
+			spec.setContent(intent);
+			spec.setIndicator("Mobility");
+			tabHost.addTab(spec);
+
+			intent = new Intent(this.getBaseContext(), ViscosityActivity.class);
+			spec = tabHost.newTabSpec("viscosity");
 			spec.setContent(intent);
 			spec.setIndicator("Viscosity");
 			tabHost.addTab(spec);
 
 			intent = new Intent(this.getBaseContext(), AboutActivity.class);
-			spec = tabHost.newTabSpec("conductivity");
-			spec.setContent(intent);
-			spec.setIndicator("Conductivity");
-			tabHost.addTab(spec);
-
-			intent = new Intent(this.getBaseContext(), AboutActivity.class);
-			spec = tabHost.newTabSpec("flow");
-			spec.setContent(intent);
-			spec.setIndicator("Flow");
-			tabHost.addTab(spec);
-
-			intent = new Intent(this.getBaseContext(), AboutActivity.class);
-			spec = tabHost.newTabSpec("About");
+			spec = tabHost.newTabSpec("about");
 			spec.setContent(intent);
 			spec.setIndicator("About");
 			tabHost.addTab(spec);
@@ -82,7 +83,6 @@ public class CEToolboxActivity extends TabActivity {
 			int displayWidth = getWindowManager().getDefaultDisplay()
 					.getWidth();
 			int defaultTabWidth = 100;
-			/* defaultTabWidth = tabHost.get */
 			if ((defaultTabWidth * tabHost.getTabWidget().getChildCount()) < displayWidth) {
 				defaultTabWidth = (int) Math.ceil(displayWidth
 						/ tabHost.getTabWidget().getChildCount());

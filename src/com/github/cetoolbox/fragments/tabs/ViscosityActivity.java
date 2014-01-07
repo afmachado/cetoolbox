@@ -39,7 +39,7 @@ import com.github.cetoolbox.CapillaryElectrophoresis;
 import com.github.cetoolbox.GlobalState;
 import com.github.cetoolbox.R;
 
-public class ExpertActivity extends Activity implements
+public class ViscosityActivity extends Activity implements
 		AdapterView.OnItemSelectedListener, View.OnClickListener {
 
 	public static final String PREFS_NAME = "capillary.electrophoresis.toolbox.PREFERENCE_FILE_KEY";
@@ -54,7 +54,6 @@ public class ExpertActivity extends Activity implements
 	EditText toWindowLengthValue;
 	EditText concentrationValue;
 	EditText molecularWeightValue;
-	EditText voltageValue;
 	TextView tvConcentrationUnits;
 	Spinner concentrationSpin;
 	int concentrationSpinPosition;
@@ -73,7 +72,6 @@ public class ExpertActivity extends Activity implements
 	Double concentration;
 	String concentrationUnit;
 	Double molecularWeight;
-	Double voltage;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -87,7 +85,7 @@ public class ExpertActivity extends Activity implements
 		config.locale = locale;
 		getBaseContext().getResources().updateConfiguration(config,
 				getBaseContext().getResources().getDisplayMetrics());
-		this.setContentView(R.layout.expert);
+		this.setContentView(R.layout.viscosity);
 
 		capillaryLengthValue = (EditText) findViewById(R.id.capillaryLengthValue);
 		diameterValue = (EditText) findViewById(R.id.diameterValue);
@@ -97,23 +95,22 @@ public class ExpertActivity extends Activity implements
 		viscosityValue = (EditText) findViewById(R.id.viscosityValue);
 		concentrationValue = (EditText) findViewById(R.id.concentrationValue);
 		molecularWeightValue = (EditText) findViewById(R.id.molecularWeightValue);
-		voltageValue = (EditText) findViewById(R.id.voltageValue);
 		concentrationSpin = (Spinner) findViewById(R.id.concentrationSpin);
 		concentrationSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> concentrationUnitsAdapter = ArrayAdapter
 				.createFromResource(this, R.array.concentrationUnitArray,
-						android.R.layout.simple_spinner_item);
+						android.R.layout.viscosity_spinner_item);
 		concentrationUnitsAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				.setDropDownViewResource(android.R.layout.viscosity_spinner_dropdown_item);
 		concentrationSpin.setAdapter(concentrationUnitsAdapter);
 
 		pressureSpin = (Spinner) findViewById(R.id.pressureSpin);
 		pressureSpin.setOnItemSelectedListener(this);
 		ArrayAdapter<CharSequence> pressureUnitsAdapter = ArrayAdapter
 				.createFromResource(this, R.array.pressureUnitArray,
-						android.R.layout.simple_spinner_item);
+						android.R.layout.viscosity_spinner_item);
 		pressureUnitsAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				.setDropDownViewResource(android.R.layout.viscosity_spinner_dropdown_item);
 		pressureSpin.setAdapter(pressureUnitsAdapter);
 
 		calculate = (Button) findViewById(R.id.button1);
@@ -142,8 +139,6 @@ public class ExpertActivity extends Activity implements
 				0);
 		molecularWeight = Double.longBitsToDouble(settings.getLong(
 				"molecularWeight", Double.doubleToLongBits(1000.0)));
-		voltage = Double.longBitsToDouble(settings.getLong("voltage",
-				Double.doubleToLongBits(30000.0)));
 
 		if (CEToolboxActivity.fragmentData == null) {
 			CEToolboxActivity.fragmentData = new GlobalState();
@@ -161,32 +156,24 @@ public class ExpertActivity extends Activity implements
 		toWindowLength = savedInstanceState.getDouble("toWindowLength");
 		diameter = savedInstanceState.getDouble("diameter");
 		pressure = savedInstanceState.getDouble("pressure");
+		pressureSpinPosition = savedInstanceState
+				.getInt("pressureSpinPosition");
 		duration = savedInstanceState.getDouble("duration");
 		viscosity = savedInstanceState.getDouble("viscosity");
 		concentration = savedInstanceState.getDouble("concentration");
+		concentrationSpinPosition = savedInstanceState
+				.getInt("concentrationSpinPosition");
 		molecularWeight = savedInstanceState.getDouble("molecularWeight");
-		voltage = savedInstanceState.getDouble("voltage");
 
 		/* Set GlobalState values */
-		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
-		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
-		CEToolboxActivity.fragmentData.setDiameter(diameter);
-		CEToolboxActivity.fragmentData.setPressure(pressure);
-		CEToolboxActivity.fragmentData.setPressureSpinPosition(pressureSpin
-				.getSelectedItemPosition());
-		CEToolboxActivity.fragmentData.setDuration(duration);
-		CEToolboxActivity.fragmentData.setViscosity(viscosity);
-		CEToolboxActivity.fragmentData.setConcentration(concentration);
-		CEToolboxActivity.fragmentData
-				.setConcentrationSpinPosition(concentrationSpin
-						.getSelectedItemPosition());
-		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
+		setGlobalStateValues();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
+		/* Get GlobalState values */
 		getGlobalStateValues();
 
 		/* Initialize content */
@@ -237,7 +224,6 @@ public class ExpertActivity extends Activity implements
 		concentrationValue.setText(concentration.toString());
 		concentrationSpin.setSelection(concentrationSpinPosition);
 		molecularWeightValue.setText(molecularWeight.toString());
-		voltageValue.setText(voltage.toString());
 	}
 
 	/*
@@ -263,8 +249,6 @@ public class ExpertActivity extends Activity implements
 			errorMessage = "The concentration field is empty.";
 		} else if (molecularWeightValue.getText().length() == 0) {
 			errorMessage = "The molecular weight field is empty.";
-		} else if (voltageValue.getText().length() == 0) {
-			errorMessage = "The voltage field is empty.";
 		}
 
 		if (errorMessage.length() == 0) {
@@ -285,8 +269,6 @@ public class ExpertActivity extends Activity implements
 			} else if (Double
 					.valueOf(molecularWeightValue.getText().toString()) == 0) {
 				errorMessage = "The molecular weight can not be null.";
-			} else if (Double.valueOf(voltageValue.getText().toString()) == 0) {
-				errorMessage = "The voltage can not be null.";
 			}
 		}
 
@@ -324,8 +306,6 @@ public class ExpertActivity extends Activity implements
 						.toString());
 				molecularWeight = Double.valueOf(molecularWeightValue.getText()
 						.toString());
-				voltage = Double.valueOf(voltageValue.getText().toString());
-
 				/* Check the values for incoherence */
 				if (toWindowLength > capillaryLength) {
 					validatedValues = false;
@@ -353,7 +333,7 @@ public class ExpertActivity extends Activity implements
 						concentrationSpinPosition);
 				editor.putLong("molecularWeight",
 						Double.doubleToLongBits(molecularWeight));
-				editor.putLong("voltage", Double.doubleToLongBits(voltage));
+
 				editor.commit();
 
 				capillary = new CapillaryElectrophoresis(pressureMBar,
@@ -361,16 +341,13 @@ public class ExpertActivity extends Activity implements
 						toWindowLength, concentration, molecularWeight);
 
 				DecimalFormat doubleDecimalFormat = new DecimalFormat("#.##");
-				DecimalFormat singleDecimalFormat = new DecimalFormat("#.#");
 				Double deliveredVolume = capillary.getDeliveredVolume(); /* nl */
 				Double capillaryVolume = capillary.getCapillaryVolume(); /* nl */
 				if (deliveredVolume > capillaryVolume) {
 					deliveredVolume = capillaryVolume;
 					isFull = true;
 				}
-				Double capillaryToWindowVolume = capillary.getToWindowVolume(); /* nl */
-				Double injectionPlugLength = capillary.getInjectionPlugLength(); /* mm */
-				Double timeToReplaceVolume = capillary.getTimeToReplaceVolume(); /* s */
+
 				/* Compute injected quantity of analyte */
 				Double analyteMass; /* ng */
 				Double analyteMol; /* mmol */
@@ -383,16 +360,15 @@ public class ExpertActivity extends Activity implements
 				}
 
 				Double plugLength = deliveredVolume / capillaryVolume * 100;
-				Double plugLengthToWindow = deliveredVolume
-						/ capillaryToWindowVolume * 100;
 
+				/* Build the result window */
 				LayoutInflater li = LayoutInflater.from(this);
-				View expertDetailsView = li.inflate(R.layout.expertresults,
+				View viscosityDetailsView = li.inflate(R.layout.viscosityresults,
 						null);
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-				builder.setView(expertDetailsView);
+				builder.setView(viscosityDetailsView);
 
 				TextView title = new TextView(this);
 				title.setText("Injection Details");
@@ -403,71 +379,27 @@ public class ExpertActivity extends Activity implements
 				title.setGravity(Gravity.CENTER);
 				builder.setCustomTitle(title);
 
-				TextView tvHydrodynamicInjection = (TextView) expertDetailsView
+				TextView tvHydrodynamicInjection = (TextView) viscosityDetailsView
 						.findViewById(R.id.hydrodynamicInjectionValue);
 				tvHydrodynamicInjection.setText(doubleDecimalFormat
 						.format(deliveredVolume) + " nl");
-
-				TextView tvCapillaryVolume = (TextView) expertDetailsView
+				TextView tvCapillaryVolume = (TextView) viscosityDetailsView
 						.findViewById(R.id.capillaryVolumeValue);
 				tvCapillaryVolume.setText(doubleDecimalFormat
 						.format(capillaryVolume) + " nl");
-
-				TextView tvCapillaryToWindowVolume = (TextView) expertDetailsView
-						.findViewById(R.id.capillaryToWindowVolumeValue);
-				tvCapillaryToWindowVolume.setText(doubleDecimalFormat
-						.format(capillaryToWindowVolume) + " nl");
-
-				TextView tvInjectionPlugLength = (TextView) expertDetailsView
-						.findViewById(R.id.injectionPlugLengthValue);
-				tvInjectionPlugLength.setText(singleDecimalFormat
-						.format(injectionPlugLength) + " mm");
-
-				TextView tvPlugLength = (TextView) expertDetailsView
+				TextView tvPlugLength = (TextView) viscosityDetailsView
 						.findViewById(R.id.plugLengthValue);
 				tvPlugLength.setText(doubleDecimalFormat.format(plugLength));
-
-				TextView tvPlugLengthToWindow = (TextView) expertDetailsView
-						.findViewById(R.id.plugLengthToWindowValue);
-				tvPlugLengthToWindow.setText(doubleDecimalFormat
-						.format(plugLengthToWindow));
-
-				TextView tvTimeToReplaceVolume = (TextView) expertDetailsView
-						.findViewById(R.id.timeToReplaceVolumeValue);
-				tvTimeToReplaceVolume.setText(doubleDecimalFormat
-						.format(timeToReplaceVolume)
-						+ " s\n"
-						+ doubleDecimalFormat.format(timeToReplaceVolume / 60)
-						+ " min");
-
-				TextView tvInjectedAnalyte = (TextView) expertDetailsView
+				TextView tvInjectedAnalyte = (TextView) viscosityDetailsView
 						.findViewById(R.id.injectedAnalyteValue);
 				tvInjectedAnalyte.setText(doubleDecimalFormat
 						.format(analyteMass)
 						+ " ng\n"
 						+ doubleDecimalFormat.format(analyteMol) + " pmol");
 
-				TextView tvInjectionPressure = (TextView) expertDetailsView
-						.findViewById(R.id.injectionPressureValue);
-				tvInjectionPressure.setText(doubleDecimalFormat
-						.format(pressureMBar * duration * 100 / 6894.8)
-						+ " psi.s");
-
-				TextView tvFlowRate = (TextView) expertDetailsView
-						.findViewById(R.id.flowRateValue);
-				tvFlowRate.setText(singleDecimalFormat.format(capillaryVolume
-						* 60 / timeToReplaceVolume)
-						+ " nL/min");
-
-				TextView tvFieldStrength = (TextView) expertDetailsView
-						.findViewById(R.id.fieldStrengthValue);
-				tvFieldStrength.setText(doubleDecimalFormat.format(voltage
-						/ capillaryLength)
-						+ " V/cm");
-
 				if (isFull) {
-					TextView tvMessage = (TextView) expertDetailsView
-							.findViewById(R.id.expertMessage);
+					TextView tvMessage = (TextView) viscosityDetailsView
+							.findViewById(R.id.viscosityMessage);
 					tvMessage.setTextColor(Color.RED);
 					tvMessage.setTypeface(null, Typeface.BOLD);
 					tvMessage.setText("Warning: the capillary is full !");
@@ -510,7 +442,6 @@ public class ExpertActivity extends Activity implements
 			concentration = 1.0;
 			concentrationSpinPosition = 0;
 			molecularWeight = 1000.0;
-			voltage = 30000.0;
 
 			editTextInitialize();
 		}
@@ -519,7 +450,6 @@ public class ExpertActivity extends Activity implements
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-
 		if (parent == concentrationSpin) {
 			concentrationUnit = (String) concentrationSpin
 					.getItemAtPosition(position);
@@ -645,12 +575,6 @@ public class ExpertActivity extends Activity implements
 					Double.valueOf(molecularWeightValue.getText().toString()));
 		} catch (Exception e) {
 			state.putDouble("molecularWeight", molecularWeight);
-		}
-		try {
-			state.putDouble("voltage",
-					Double.valueOf(voltageValue.getText().toString()));
-		} catch (Exception e) {
-			state.putDouble("voltage", voltage);
 		}
 
 		super.onSaveInstanceState(state);
