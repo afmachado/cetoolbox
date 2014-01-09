@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2012-2013 CNRS and University of Strasbourg
+  Copyright (C) 2012-2014 CNRS and University of Strasbourg
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -135,111 +135,30 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/durationRow"
+            android:id="@+id/detectionTimeRow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/durationLabel"
+                android:id="@+id/detectionTimeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/Time" />
+                android:text="@string/DetectionTime" />
 
             <EditText
-                android:id="@+id/durationValue"
+                android:id="@+id/detectionTimeValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="numberDecimal" />
 
             <TextView
-                android:id="@+id/durationUnitLabel"
+                android:id="@+id/detectionTimeUnitLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/Second" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/viscosityRow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/viscosityLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/Viscosity" />
-
-            <EditText
-                android:id="@+id/viscosityValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="numberDecimal" />
-
-            <TextView
-                android:id="@+id/viscosityUnitLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/Centipoid" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/concentrationRow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/concentrationLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/Concentration" />
-
-            <EditText
-                android:id="@+id/concentrationValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="numberDecimal" />
-
-            <Spinner
-                android:id="@+id/concentrationSpin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawSelectorOnTop="true" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/molecularWeightRow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/molecularWeightLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/MolecularWeight" />
-
-            <EditText
-                android:id="@+id/molecularWeightValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="numberDecimal" />
-
-            <TextView
-                android:id="@+id/molecularWeightUnitLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/Gpermol" />
         </TableRow>
 
         <TableRow

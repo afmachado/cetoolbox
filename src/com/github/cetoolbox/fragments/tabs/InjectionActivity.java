@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2012-2013 CNRS and University of Strasbourg
+ * Copyright (C) 2012-2014 CNRS and University of Strasbourg
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -387,12 +387,12 @@ public class InjectionActivity extends Activity implements
 						/ capillaryToWindowVolume * 100;
 
 				LayoutInflater li = LayoutInflater.from(this);
-				View injectionDetailsView = li.inflate(R.layout.injectionresults,
-						null);
+				View InjectionDetailsView = li.inflate(
+						R.layout.injectionresults, null);
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-				builder.setView(injectionDetailsView);
+				builder.setView(InjectionDetailsView);
 
 				TextView title = new TextView(this);
 				title.setText("Injection Details");
@@ -403,36 +403,36 @@ public class InjectionActivity extends Activity implements
 				title.setGravity(Gravity.CENTER);
 				builder.setCustomTitle(title);
 
-				TextView tvHydrodynamicInjection = (TextView) injectionDetailsView
+				TextView tvHydrodynamicInjection = (TextView) InjectionDetailsView
 						.findViewById(R.id.hydrodynamicInjectionValue);
 				tvHydrodynamicInjection.setText(doubleDecimalFormat
 						.format(deliveredVolume) + " nl");
 
-				TextView tvCapillaryVolume = (TextView) injectionDetailsView
+				TextView tvCapillaryVolume = (TextView) InjectionDetailsView
 						.findViewById(R.id.capillaryVolumeValue);
 				tvCapillaryVolume.setText(doubleDecimalFormat
 						.format(capillaryVolume) + " nl");
 
-				TextView tvCapillaryToWindowVolume = (TextView) injectionDetailsView
+				TextView tvCapillaryToWindowVolume = (TextView) InjectionDetailsView
 						.findViewById(R.id.capillaryToWindowVolumeValue);
 				tvCapillaryToWindowVolume.setText(doubleDecimalFormat
 						.format(capillaryToWindowVolume) + " nl");
 
-				TextView tvInjectionPlugLength = (TextView) injectionDetailsView
+				TextView tvInjectionPlugLength = (TextView) InjectionDetailsView
 						.findViewById(R.id.injectionPlugLengthValue);
 				tvInjectionPlugLength.setText(singleDecimalFormat
 						.format(injectionPlugLength) + " mm");
 
-				TextView tvPlugLength = (TextView) injectionDetailsView
+				TextView tvPlugLength = (TextView) InjectionDetailsView
 						.findViewById(R.id.plugLengthValue);
 				tvPlugLength.setText(doubleDecimalFormat.format(plugLength));
 
-				TextView tvPlugLengthToWindow = (TextView) injectionDetailsView
+				TextView tvPlugLengthToWindow = (TextView) InjectionDetailsView
 						.findViewById(R.id.plugLengthToWindowValue);
 				tvPlugLengthToWindow.setText(doubleDecimalFormat
 						.format(plugLengthToWindow));
 
-				TextView tvTimeToReplaceVolume = (TextView) injectionDetailsView
+				TextView tvTimeToReplaceVolume = (TextView) InjectionDetailsView
 						.findViewById(R.id.timeToReplaceVolumeValue);
 				tvTimeToReplaceVolume.setText(doubleDecimalFormat
 						.format(timeToReplaceVolume)
@@ -440,33 +440,33 @@ public class InjectionActivity extends Activity implements
 						+ doubleDecimalFormat.format(timeToReplaceVolume / 60)
 						+ " min");
 
-				TextView tvInjectedAnalyte = (TextView) injectionDetailsView
+				TextView tvInjectedAnalyte = (TextView) InjectionDetailsView
 						.findViewById(R.id.injectedAnalyteValue);
 				tvInjectedAnalyte.setText(doubleDecimalFormat
 						.format(analyteMass)
 						+ " ng\n"
 						+ doubleDecimalFormat.format(analyteMol) + " pmol");
 
-				TextView tvInjectionPressure = (TextView) injectionDetailsView
+				TextView tvInjectionPressure = (TextView) InjectionDetailsView
 						.findViewById(R.id.injectionPressureValue);
 				tvInjectionPressure.setText(doubleDecimalFormat
 						.format(pressureMBar * duration * 100 / 6894.8)
 						+ " psi.s");
 
-				TextView tvFlowRate = (TextView) injectionDetailsView
+				TextView tvFlowRate = (TextView) InjectionDetailsView
 						.findViewById(R.id.flowRateValue);
 				tvFlowRate.setText(singleDecimalFormat.format(capillaryVolume
 						* 60 / timeToReplaceVolume)
 						+ " nL/min");
 
-				TextView tvFieldStrength = (TextView) injectionDetailsView
+				TextView tvFieldStrength = (TextView) InjectionDetailsView
 						.findViewById(R.id.fieldStrengthValue);
 				tvFieldStrength.setText(doubleDecimalFormat.format(voltage
 						/ capillaryLength)
 						+ " V/cm");
 
 				if (isFull) {
-					TextView tvMessage = (TextView) injectionDetailsView
+					TextView tvMessage = (TextView) InjectionDetailsView
 							.findViewById(R.id.injectionMessage);
 					tvMessage.setTextColor(Color.RED);
 					tvMessage.setTypeface(null, Typeface.BOLD);

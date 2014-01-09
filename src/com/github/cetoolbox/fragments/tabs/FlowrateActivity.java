@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2012-2013 CNRS and University of Strasbourg
+ * Copyright (C) 2012-2014 CNRS and University of Strasbourg
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import com.github.cetoolbox.CapillaryElectrophoresis;
 import com.github.cetoolbox.GlobalState;
 import com.github.cetoolbox.R;
 
-public class FlowActivity extends Activity implements
+public class FlowrateActivity extends Activity implements
 		AdapterView.OnItemSelectedListener, View.OnClickListener {
 
 	public static final String PREFS_NAME = "capillary.electrophoresis.toolbox.PREFERENCE_FILE_KEY";

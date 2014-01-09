@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2012-2013 CNRS and University of Strasbourg
+ * Copyright (C) 2012-2014 CNRS and University of Strasbourg
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,17 @@ package com.github.cetoolbox;
 
 public class CapillaryElectrophoresis {
 
-	/* The pressure drop across the capillary (mbar) */
-	private double pressure;
+	/* The length of the capillary (centimeter) */
+	private double totalLength;
+
+	/* The window length (centimeter) */
+	private double toWindowLength;
 
 	/* The capillary inside diameter (micrometer) */
 	private double diameter;
+
+	/* The pressure drop across the capillary (mbar) */
+	private double pressure;
 
 	/* The time the pressure is applied (second) */
 	private double duration;
@@ -35,51 +41,42 @@ public class CapillaryElectrophoresis {
 	/* The buffer viscosity (cp) */
 	private double viscosity;
 
-	/* The length of the capillary (centimeter) */
-	private double totalLength;
-
-	/* The window length (centimeter) */
-	private double toWindowLength;
-
-	/* The voltage applied to the capillary (kilovolt) */
-	private double voltage;
-
-	/* The temperature (C) */
-	private double temperature;
-
 	/* Analyte concentration (mol/l) */
 	private double concentration;
 
 	/* Analyte molecular weight (g/mol) */
 	private double molecularWeight;
 
+	/* The voltage applied to the capillary (kilovolt) */
+	private double voltage;
+
+	/* The detection time (s) */
+	private double detectionTime;
+
+	public CapillaryElectrophoresis() {
+		this.totalLength = 0.0;
+		this.toWindowLength = 0.0;
+		this.diameter = 0.0;
+		this.pressure = 0.0;
+		this.duration = 0.0;
+		this.viscosity = 0.0;
+		this.concentration = 0.0;
+		this.molecularWeight = 0.0;
+		this.voltage = 0.0;
+		this.detectionTime = 0.0;
+	}
+
 	public CapillaryElectrophoresis(double pressure, double diameter,
 			double duration, double viscosity, double totalLength,
 			double toWindowLength, double concentration, double molecularWeight) {
-		this.pressure = pressure;
-		this.diameter = diameter;
-		this.duration = duration;
-		this.viscosity = viscosity;
 		this.totalLength = totalLength;
 		this.toWindowLength = toWindowLength;
+		this.diameter = diameter;
+		this.pressure = pressure;
+		this.duration = duration;
+		this.viscosity = viscosity;
 		this.concentration = concentration;
 		this.molecularWeight = molecularWeight;
-	}
-
-	public void setPressure(double pressure) {
-		this.pressure = pressure;
-	}
-
-	public void setDiameter(double diameter) {
-		this.diameter = diameter;
-	}
-
-	public void setPressureTime(double duration) {
-		this.duration = duration;
-	}
-
-	public void setViscosity(double viscosity) {
-		this.viscosity = viscosity;
 	}
 
 	public void setTotalLength(double totalLength) {
@@ -90,12 +87,36 @@ public class CapillaryElectrophoresis {
 		this.toWindowLength = toWindowLength;
 	}
 
+	public void setDiameter(double diameter) {
+		this.diameter = diameter;
+	}
+
+	public void setPressure(double pressure) {
+		this.pressure = pressure;
+	}
+
+	public void setDuration(double duration) {
+		this.duration = duration;
+	}
+
+	public void setViscosity(double viscosity) {
+		this.viscosity = viscosity;
+	}
+
 	public void setConcentration(double concentration) {
 		this.concentration = concentration;
 	}
 
 	public void setMolecularWeight(double molecularWeight) {
 		this.molecularWeight = molecularWeight;
+	}
+
+	public void setVoltage(double voltage) {
+		this.voltage = voltage;
+	}
+
+	public void setDetectionTime(double detectionTime) {
+		this.detectionTime = detectionTime;
 	}
 
 	public double getDeliveredVolume() {
@@ -130,4 +151,18 @@ public class CapillaryElectrophoresis {
 				/ (Math.pow(diameter, 2) * Math.pow(10, -3) * pressure);
 		return timeToReplaceVolume;
 	}
+
+	public double getViscosity() {
+		double viscosity;
+		viscosity = 0.0;
+		return viscosity;
+	}
+	
+
+	public double getConductivity() {
+		double conductivity;
+		conductivity = 0.0;
+		return conductivity;
+	}
+
 }

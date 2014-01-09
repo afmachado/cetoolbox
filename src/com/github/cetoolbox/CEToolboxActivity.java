@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2012-2013 CNRS and University of Strasbourg
+ * Copyright (C) 2012-2014 CNRS and University of Strasbourg
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,8 @@ public class CEToolboxActivity extends TabActivity {
 			spec.setIndicator("Injection");
 			tabHost.addTab(spec);
 
-			intent = new Intent(this.getBaseContext(), ConductivityActivity.class);
+			intent = new Intent(this.getBaseContext(),
+					ConductivityActivity.class);
 			spec = tabHost.newTabSpec("Conductivity");
 			spec.setContent(intent);
 			spec.setIndicator("Conductivity");

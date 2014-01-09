@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2012-2013 CNRS and University of Strasbourg
+ * Copyright (C) 2012-2014 CNRS and University of Strasbourg
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ public class GlobalState {
 	private Double toWindowLength;
 	private Double concentration;
 	private Double molecularWeight;
+	private Double voltage;
+	private Double detectionTime;
+	private Double electricCurrent;
 	private int concentrationSpinPosition;
 	private int pressureSpinPosition;
 
@@ -89,6 +92,30 @@ public class GlobalState {
 
 	public Double getMolecularWeight() {
 		return molecularWeight;
+	}
+
+	public void setVoltage(Double voltage) {
+		this.voltage = voltage;
+	}
+
+	public Double getVoltage() {
+		return voltage;
+	}
+
+	public void setDetectionTime(Double detectionTime) {
+		this.detectionTime = detectionTime;
+	}
+
+	public Double getDetectionTime() {
+		return detectionTime;
+	}
+
+	public void setElectricCurrent(Double electricCurrent) {
+		this.electricCurrent = electricCurrent;
+	}
+
+	public Double getElectricCurrent() {
+		return electricCurrent;
 	}
 
 	public void setConcentrationSpinPosition(int concentrationSpinPosition) {
