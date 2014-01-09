@@ -22,7 +22,7 @@
     <string name="InsideDiameter">Inside diameter</string>
     <string name="Pressure">Pressure</string>
     <string name="Time">Time</string>
-    <string name="DetectionTime">DetectionTime</string>
+    <string name="DetectionTime">Detection time</string>
     <string name="Viscosity">Viscosity</string>
     <string name="Calculate">Calculate</string>
     <string name="Reset">Reset</string>
