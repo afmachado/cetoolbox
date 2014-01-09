@@ -29,6 +29,7 @@ public class GlobalState {
 	private Double electricCurrent;
 	private int concentrationSpinPosition;
 	private int pressureSpinPosition;
+	private int detectionTimeSpinPosition;
 
 	public void setDiameter(Double diameter) {
 		this.diameter = diameter;
@@ -132,5 +133,13 @@ public class GlobalState {
 
 	public int getPressureSpinPosition() {
 		return pressureSpinPosition;
+	}
+
+	public void setDetectionTimeSpinPosition(int detectionTimeSpinPosition) {
+		this.detectionTimeSpinPosition = detectionTimeSpinPosition;
+	}
+
+	public int getDetectionTimeSpinPosition() {
+		return detectionTimeSpinPosition;
 	}
 }

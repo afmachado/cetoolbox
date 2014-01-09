@@ -50,9 +50,10 @@ public class ViscosityActivity extends Activity implements
 	EditText diameterValue;
 	EditText pressureValue;
 	EditText detectionTimeValue;
-
 	Spinner pressureSpin;
 	int pressureSpinPosition;
+	Spinner detectionTimeSpin;
+	int detectionTimeSpinPosition;
 
 	CapillaryElectrophoresis capillary;
 
@@ -62,6 +63,7 @@ public class ViscosityActivity extends Activity implements
 	Double pressure;
 	String pressureUnit;
 	Double detectionTime;
+	String detectionTimeUnit;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -90,6 +92,14 @@ public class ViscosityActivity extends Activity implements
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		pressureSpin.setAdapter(pressureUnitsAdapter);
 		detectionTimeValue = (EditText) findViewById(R.id.detectionTimeValue);
+		detectionTimeSpin = (Spinner) findViewById(R.id.detectionTimeSpin);
+		detectionTimeSpin.setOnItemSelectedListener(this);
+		ArrayAdapter<CharSequence> detectionTimeUnitsAdapter = ArrayAdapter
+				.createFromResource(this, R.array.detectionTimeUnitArray,
+						android.R.layout.simple_spinner_item);
+		detectionTimeUnitsAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		detectionTimeSpin.setAdapter(detectionTimeUnitsAdapter);
 
 		calculate = (Button) findViewById(R.id.button1);
 		calculate.setOnClickListener(this);
@@ -109,6 +119,8 @@ public class ViscosityActivity extends Activity implements
 		pressureSpinPosition = settings.getInt("pressureSpinPosition", 0);
 		detectionTime = Double.longBitsToDouble(settings.getLong(
 				"detectionTime", Double.doubleToLongBits(10.0)));
+		detectionTimeSpinPosition = settings.getInt(
+				"detectionTimeSpinPosition", 0);
 
 		if (CEToolboxActivity.fragmentData == null) {
 			CEToolboxActivity.fragmentData = new GlobalState();
@@ -129,6 +141,8 @@ public class ViscosityActivity extends Activity implements
 		pressureSpinPosition = savedInstanceState
 				.getInt("pressureSpinPosition");
 		detectionTime = savedInstanceState.getDouble("detectionTime");
+		detectionTimeSpinPosition = savedInstanceState
+				.getInt("detectionTimeSpinPosition");
 
 		/* Set GlobalState values */
 		setGlobalStateValues();
@@ -154,6 +168,8 @@ public class ViscosityActivity extends Activity implements
 		pressureSpinPosition = CEToolboxActivity.fragmentData
 				.getPressureSpinPosition();
 		detectionTime = CEToolboxActivity.fragmentData.getDetectionTime();
+		detectionTimeSpinPosition = CEToolboxActivity.fragmentData
+				.getDetectionTimeSpinPosition();
 
 	}
 
@@ -166,6 +182,9 @@ public class ViscosityActivity extends Activity implements
 		CEToolboxActivity.fragmentData
 				.setPressureSpinPosition(pressureSpinPosition);
 		CEToolboxActivity.fragmentData.setDetectionTime(detectionTime);
+		CEToolboxActivity.fragmentData
+				.setDetectionTimeSpinPosition(detectionTimeSpinPosition);
+
 	}
 
 	private void editTextInitialize() {
@@ -175,6 +194,8 @@ public class ViscosityActivity extends Activity implements
 		pressureValue.setText(pressure.toString());
 		pressureSpin.setSelection(pressureSpinPosition);
 		detectionTimeValue.setText(detectionTime.toString());
+		detectionTimeSpin.setSelection(detectionTimeSpinPosition);
+
 	}
 
 	/*
@@ -218,6 +239,7 @@ public class ViscosityActivity extends Activity implements
 		if (view == calculate) {
 			boolean validatedValues = false;
 			Double pressureMBar = 0.0;
+			Double detectionTimeSecond = 0.0;
 			String errorMessage;
 
 			errorMessage = parseEditTextContent();
@@ -226,20 +248,24 @@ public class ViscosityActivity extends Activity implements
 			}
 			if (validatedValues) {
 				/* Parameter validation */
-				diameter = Double.valueOf(diameterValue.getText().toString());
-				detectionTime = Double.valueOf(detectionTimeValue.getText()
-						.toString());
 				capillaryLength = Double.valueOf(capillaryLengthValue.getText()
 						.toString());
+				toWindowLength = Double.valueOf(toWindowLengthValue.getText()
+						.toString());
+				diameter = Double.valueOf(diameterValue.getText().toString());
 				pressure = Double.valueOf(pressureValue.getText().toString());
 				if (pressureUnit.compareTo("psi") == 0) {
 					pressureMBar = pressure * 6894.8 / 100;
 				} else {
 					pressureMBar = pressure;
 				}
-				toWindowLength = Double.valueOf(toWindowLengthValue.getText()
+				detectionTime = Double.valueOf(detectionTimeValue.getText()
 						.toString());
-
+				if (detectionTimeUnit.compareTo("min") == 0) {
+					detectionTimeSecond = detectionTime * 60;
+				} else {
+					detectionTimeSecond = detectionTime;
+				}
 				/* Check the values for incoherence */
 				if (toWindowLength > capillaryLength) {
 					validatedValues = false;
@@ -269,7 +295,7 @@ public class ViscosityActivity extends Activity implements
 				capillary.setToWindowLength(toWindowLength);
 				capillary.setDiameter(diameter);
 				capillary.setPressure(pressureMBar);
-				capillary.setDetectionTime(detectionTime);
+				capillary.setDetectionTime(detectionTimeSecond);
 
 				DecimalFormat doubleDecimalFormat = new DecimalFormat("#.##");
 				Double viscosity = capillary.getViscosity(); /* nl */
@@ -331,6 +357,7 @@ public class ViscosityActivity extends Activity implements
 			pressure = 30.0;
 			pressureSpinPosition = 0;
 			detectionTime = 10.0;
+			detectionTimeSpinPosition = 0;
 
 			editTextInitialize();
 		}
@@ -342,6 +369,10 @@ public class ViscosityActivity extends Activity implements
 		if (parent == pressureSpin) {
 			pressureUnit = (String) pressureSpin.getItemAtPosition(position);
 			pressureSpinPosition = position;
+		} else if (parent == detectionTimeSpin) {
+			detectionTimeUnit = (String) detectionTimeSpin
+					.getItemAtPosition(position);
+			detectionTimeSpinPosition = position;
 		}
 	}
 
@@ -380,11 +411,13 @@ public class ViscosityActivity extends Activity implements
 		CEToolboxActivity.fragmentData
 				.setPressureSpinPosition(pressureSpinPosition);
 		try {
-			CEToolboxActivity.fragmentData.setDuration(Double
+			CEToolboxActivity.fragmentData.setDetectionTime(Double
 					.valueOf(detectionTimeValue.getText().toString()));
 		} catch (Exception e) {
-			CEToolboxActivity.fragmentData.setDuration(detectionTime);
+			CEToolboxActivity.fragmentData.setDetectionTime(detectionTime);
 		}
+		CEToolboxActivity.fragmentData
+				.setDetectionTimeSpinPosition(detectionTimeSpinPosition);
 
 		super.onPause();
 	}
@@ -422,6 +455,7 @@ public class ViscosityActivity extends Activity implements
 		} catch (Exception e) {
 			state.putDouble("detectionTime", detectionTime);
 		}
+		state.putInt("detectionTimeSpinPosition", detectionTimeSpinPosition);
 
 		super.onSaveInstanceState(state);
 	}
