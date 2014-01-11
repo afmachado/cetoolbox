@@ -53,6 +53,9 @@ public class CapillaryElectrophoresis {
 	/* The detection time (s) */
 	private double detectionTime;
 
+	/* The electro-osmosis time (s) */
+	private double electroOsmosisTime;
+
 	public CapillaryElectrophoresis() {
 		this.totalLength = 0.0;
 		this.toWindowLength = 0.0;
@@ -64,6 +67,7 @@ public class CapillaryElectrophoresis {
 		this.molecularWeight = 0.0;
 		this.voltage = 0.0;
 		this.detectionTime = 0.0;
+		this.electroOsmosisTime = 0.0;
 	}
 
 	public CapillaryElectrophoresis(double pressure, double diameter,
@@ -119,6 +123,10 @@ public class CapillaryElectrophoresis {
 		this.detectionTime = detectionTime;
 	}
 
+	public void setElectroOsmosisTime(double electroOsmosisTime) {
+		this.electroOsmosisTime = electroOsmosisTime;
+	}
+
 	public double getDeliveredVolume() {
 		double deliveredVolume;
 		deliveredVolume = (pressure * Math.pow(diameter, 4) * Math.PI * duration)
@@ -157,7 +165,6 @@ public class CapillaryElectrophoresis {
 		viscosity = 0.0;
 		return viscosity;
 	}
-	
 
 	public double getConductivity() {
 		double conductivity;
@@ -165,4 +172,28 @@ public class CapillaryElectrophoresis {
 		return conductivity;
 	}
 
+	public double getFieldStrength() {
+		double fieldStrength;
+		fieldStrength = 0.0;
+		return fieldStrength;
+	}
+
+	public double getMicroEOF() {
+		double microEOF;
+		microEOF = 0.0;
+		return microEOF;
+	};
+
+	public double getLengthPerMinute() {
+		double lengthPerMinute;
+		lengthPerMinute = 0.0;
+		return lengthPerMinute;
+
+	}
+
+	public double getFlowRate() {
+		double flowRate;
+		flowRate = 0.0;
+		return flowRate;
+	}
 }

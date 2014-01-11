@@ -24,52 +24,52 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/hydrodynamicInjectionLabel"
+            android:id="@+id/fieldStrengthLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/HydrodynamicInjection" />
+            android:text="@string/FieldStrength" />
 
         <TextView
-            android:id="@+id/hydrodynamicInjectionValue"
+            android:id="@+id/fieldStrengthValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
     </TableRow>
 
-    <TableRow
+        <TableRow
         android:id="@+id/tableRow2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/capillaryVolumeLabel"
+            android:id="@+id/microEOFLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/CapillaryVolume" />
+            android:text="@string/MicroEOF" />
 
         <TextView
-            android:id="@+id/capillaryVolumeValue"
+            android:id="@+id/microEOFValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
     </TableRow>
-
+    
     <TableRow
         android:id="@+id/tableRow3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/plugLengthLabel"
+            android:id="@+id/lengthPerMinuteLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/PlugLength" />
+            android:text="@string/LengthPerMinute" />
 
         <TextView
-            android:id="@+id/plugLengthValue"
+            android:id="@+id/lengthPerMinuteValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -81,14 +81,14 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/injectedAnalyteLabel"
+            android:id="@+id/flowRateLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/InjectedAnalyte" />
+            android:text="@string/FlowRate" />
 
         <TextView
-            android:id="@+id/injectedAnalyteValue"
+            android:id="@+id/flowRateValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -100,7 +100,7 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/flowrateMessage"
+            android:id="@+id/flowRateMessage"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

@@ -60,9 +60,9 @@ public class CEToolboxActivity extends TabActivity {
 			tabHost.addTab(spec);
 
 			intent = new Intent(this.getBaseContext(), FlowrateActivity.class);
-			spec = tabHost.newTabSpec("flowrate");
+			spec = tabHost.newTabSpec("flowRate");
 			spec.setContent(intent);
-			spec.setIndicator("Flowrate");
+			spec.setIndicator("FlowRate");
 			tabHost.addTab(spec);
 
 			intent = new Intent(this.getBaseContext(), MobilityActivity.class);

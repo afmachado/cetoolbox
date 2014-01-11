@@ -27,9 +27,11 @@ public class GlobalState {
 	private Double voltage;
 	private Double detectionTime;
 	private Double electricCurrent;
+	private Double electroOsmosisTime;
 	private int concentrationSpinPosition;
 	private int pressureSpinPosition;
 	private int detectionTimeSpinPosition;
+	private int electroOsmosisTimeSpinPosition;
 
 	public void setDiameter(Double diameter) {
 		this.diameter = diameter;
@@ -119,6 +121,15 @@ public class GlobalState {
 		return electricCurrent;
 	}
 
+	public void setElectroOsmosisTime(Double electroOsmosisTime) {
+		this.electroOsmosisTime = electroOsmosisTime;
+	}
+
+	public Double getElectroOsmosisTime() {
+		return electroOsmosisTime;
+	}
+
+
 	public void setConcentrationSpinPosition(int concentrationSpinPosition) {
 		this.concentrationSpinPosition = concentrationSpinPosition;
 	}
@@ -142,4 +153,13 @@ public class GlobalState {
 	public int getDetectionTimeSpinPosition() {
 		return detectionTimeSpinPosition;
 	}
+
+	public void setElectroOsmosisTimeSpinPosition(int electroOsmosisTimeSpinPosition) {
+		this.electroOsmosisTimeSpinPosition = electroOsmosisTimeSpinPosition;
+	}
+
+	public int getElectroOsmosisTimeSpinPosition() {
+		return electroOsmosisTimeSpinPosition;
+	}
+
 }
