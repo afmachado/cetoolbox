@@ -21,7 +21,6 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -109,7 +108,7 @@ public class FlowrateActivity extends Activity implements
 				Double.doubleToLongBits(50.0)));
 		electroOsmosisTime = Double.longBitsToDouble(settings.getLong(
 				"electroOsmosisTime", Double.doubleToLongBits(1.0)));
-		electroOsmosisTimeSpinPosition = settings.getInt("concentratinSpinPosition",
+		electroOsmosisTimeSpinPosition = settings.getInt("electroOsmosisTimeSpinPosition",
 				0);
 		voltage = Double.longBitsToDouble(settings.getLong("voltage",
 				Double.doubleToLongBits(30.0)));
