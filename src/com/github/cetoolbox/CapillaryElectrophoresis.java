@@ -50,6 +50,9 @@ public class CapillaryElectrophoresis {
 	/* The voltage applied to the capillary (kilovolt) */
 	private double voltage;
 
+	/* The voltage applied to the capillary (microampere) */
+	private double electricCurrent;
+
 	/* The detection time (s) */
 	private double detectionTime;
 
@@ -66,6 +69,7 @@ public class CapillaryElectrophoresis {
 		this.concentration = 0.0;
 		this.molecularWeight = 0.0;
 		this.voltage = 0.0;
+		this.electricCurrent = 0.0;
 		this.detectionTime = 0.0;
 		this.electroOsmosisTime = 0.0;
 	}
@@ -81,6 +85,10 @@ public class CapillaryElectrophoresis {
 		this.viscosity = viscosity;
 		this.concentration = concentration;
 		this.molecularWeight = molecularWeight;
+		this.voltage = 0.0;
+		this.electricCurrent = 0.0;
+		this.detectionTime = 0.0;
+		this.electroOsmosisTime = 0.0;
 	}
 
 	public void setTotalLength(double totalLength) {
@@ -117,6 +125,10 @@ public class CapillaryElectrophoresis {
 
 	public void setVoltage(double voltage) {
 		this.voltage = voltage;
+	}
+
+	public void setElectricCurrent(double electricCurrent) {
+		this.electricCurrent = electricCurrent;
 	}
 
 	public void setDetectionTime(double detectionTime) {
@@ -162,38 +174,41 @@ public class CapillaryElectrophoresis {
 
 	public double getViscosity() {
 		double viscosity;
+		viscosity = (pressure * Math.pow(diameter, 2) * detectionTime)
+				/ (32 * totalLength * toWindowLength * Math.pow(10, 5));
 		viscosity = 0.0;
 		return viscosity;
 	}
 
 	public double getConductivity() {
 		double conductivity;
-		conductivity = 0.0;
+		conductivity = (4 * totalLength * Math.pow(10, 4) * electricCurrent)
+				/ (Math.PI * Math.pow(diameter, 2) * voltage);
 		return conductivity;
 	}
 
 	public double getFieldStrength() {
 		double fieldStrength;
-		fieldStrength = 0.0;
+		fieldStrength = voltage / totalLength;
 		return fieldStrength;
 	}
 
 	public double getMicroEOF() {
 		double microEOF;
-		microEOF = 0.0;
+		microEOF = (totalLength * toWindowLength)
+				/ (electroOsmosisTime * voltage * Math.pow(10, 3));
 		return microEOF;
 	};
 
 	public double getLengthPerMinute() {
 		double lengthPerMinute;
-		lengthPerMinute = 0.0;
+		lengthPerMinute = (60 * getMicroEOF() * voltage * Math.pow(10,5)) / totalLength;
 		return lengthPerMinute;
-
 	}
 
 	public double getFlowRate() {
 		double flowRate;
-		flowRate = 0.0;
+		flowRate = (Math.PI * Math.pow(diameter, 2) * getLengthPerMinute()) / 4;
 		return flowRate;
 	}
 }
