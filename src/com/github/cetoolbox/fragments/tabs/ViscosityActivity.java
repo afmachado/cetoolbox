@@ -378,7 +378,6 @@ public class ViscosityActivity extends Activity implements
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
-		/* concentrationSpin.setText(""); */
 	}
 
 	@Override
