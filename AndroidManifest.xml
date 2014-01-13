@@ -15,8 +15,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.cetoolbox"
-    android:versionCode="2"
-    android:versionName="1.1" >
+    android:versionCode="3"
+    android:versionName="2.0" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -35,11 +35,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".fragments.tabs.SimpleActivity" >
-        </activity>
-        <activity android:name=".fragments.tabs.ExpertActivity" >
-        </activity>
         <activity android:name=".fragments.tabs.AboutActivity" >
+        </activity>
+        <activity android:name=".fragments.tabs.ConductivityActivity" >
+        </activity>
+        <activity android:name=".fragments.tabs.FlowrateActivity" >
+        </activity>
+        <activity android:name=".fragments.tabs.InjectionActivity" >
+        </activity>
+        <activity android:name=".fragments.tabs.ViscosityActivity" >
         </activity>
     </application>
 
