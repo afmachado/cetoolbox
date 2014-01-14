@@ -138,7 +138,7 @@ public class InjectionActivity extends Activity implements
 				Double.doubleToLongBits(1.0)));
 		concentration = Double.longBitsToDouble(settings.getLong(
 				"concentration", Double.doubleToLongBits(1.0)));
-		concentrationSpinPosition = settings.getInt("concentratinSpinPosition",
+		concentrationSpinPosition = settings.getInt("concentrationSpinPosition",
 				0);
 		molecularWeight = Double.longBitsToDouble(settings.getLong(
 				"molecularWeight", Double.doubleToLongBits(1000.0)));
