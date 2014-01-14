@@ -36,13 +36,10 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 import com.github.cetoolbox.CEToolboxActivity;
 import com.github.cetoolbox.CapillaryElectrophoresis;
-import com.github.cetoolbox.GlobalState;
 import com.github.cetoolbox.R;
 
 public class InjectionActivity extends Activity implements
 		AdapterView.OnItemSelectedListener, View.OnClickListener {
-
-	public static final String PREFS_NAME = "capillary.electrophoresis.toolbox.PREFERENCE_FILE_KEY";
 
 	Button calculate;
 	Button reset;
@@ -121,36 +118,7 @@ public class InjectionActivity extends Activity implements
 		reset = (Button) findViewById(R.id.button2);
 		reset.setOnClickListener(this);
 
-		/* Restore preferences */
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		capillaryLength = Double.longBitsToDouble(settings.getLong(
-				"capillaryLength", Double.doubleToLongBits(100.0)));
-		toWindowLength = Double.longBitsToDouble(settings.getLong(
-				"toWindowLength", Double.doubleToLongBits(100.0)));
-		diameter = Double.longBitsToDouble(settings.getLong("diameter",
-				Double.doubleToLongBits(50.0)));
-		pressure = Double.longBitsToDouble(settings.getLong("pressure",
-				Double.doubleToLongBits(30.0)));
-		pressureSpinPosition = settings.getInt("pressureSpinPosition", 0);
-		duration = Double.longBitsToDouble(settings.getLong("duration",
-				Double.doubleToLongBits(10.0)));
-		viscosity = Double.longBitsToDouble(settings.getLong("viscosity",
-				Double.doubleToLongBits(1.0)));
-		concentration = Double.longBitsToDouble(settings.getLong(
-				"concentration", Double.doubleToLongBits(1.0)));
-		concentrationSpinPosition = settings.getInt("concentrationSpinPosition",
-				0);
-		molecularWeight = Double.longBitsToDouble(settings.getLong(
-				"molecularWeight", Double.doubleToLongBits(1000.0)));
-		voltage = Double.longBitsToDouble(settings.getLong("voltage",
-				Double.doubleToLongBits(30000.0)));
-
-		if (CEToolboxActivity.fragmentData == null) {
-			CEToolboxActivity.fragmentData = new GlobalState();
-			setGlobalStateValues();
-		} else {
-			getGlobalStateValues();
-		}
+		getGlobalStateValues();
 	}
 
 	@Override
@@ -168,19 +136,7 @@ public class InjectionActivity extends Activity implements
 		voltage = savedInstanceState.getDouble("voltage");
 
 		/* Set GlobalState values */
-		CEToolboxActivity.fragmentData.setCapillaryLength(capillaryLength);
-		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
-		CEToolboxActivity.fragmentData.setDiameter(diameter);
-		CEToolboxActivity.fragmentData.setPressure(pressure);
-		CEToolboxActivity.fragmentData.setPressureSpinPosition(pressureSpin
-				.getSelectedItemPosition());
-		CEToolboxActivity.fragmentData.setDuration(duration);
-		CEToolboxActivity.fragmentData.setViscosity(viscosity);
-		CEToolboxActivity.fragmentData.setConcentration(concentration);
-		CEToolboxActivity.fragmentData
-				.setConcentrationSpinPosition(concentrationSpin
-						.getSelectedItemPosition());
-		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
+		setGlobalStateValues();
 	}
 
 	@Override
@@ -207,7 +163,7 @@ public class InjectionActivity extends Activity implements
 		concentrationSpinPosition = CEToolboxActivity.fragmentData
 				.getConcentrationSpinPosition();
 		molecularWeight = CEToolboxActivity.fragmentData.getMolecularWeight();
-
+        voltage = CEToolboxActivity.fragmentData.getVoltage();
 	}
 
 	private void setGlobalStateValues() {
@@ -224,6 +180,7 @@ public class InjectionActivity extends Activity implements
 		CEToolboxActivity.fragmentData
 				.setConcentrationSpinPosition(concentrationSpinPosition);
 		CEToolboxActivity.fragmentData.setMolecularWeight(molecularWeight);
+		CEToolboxActivity.fragmentData.setVoltage(voltage);
 	}
 
 	private void editTextInitialize() {
@@ -334,9 +291,8 @@ public class InjectionActivity extends Activity implements
 			}
 			if (validatedValues) {
 				/* If all is fine, save the data and compute */
-				SharedPreferences preferences = getSharedPreferences(
-						PREFS_NAME, 0);
-				SharedPreferences.Editor editor = preferences.edit();
+				SharedPreferences.Editor editor = CEToolboxActivity.preferences
+						.edit();
 
 				editor.putLong("capillaryLength",
 						Double.doubleToLongBits(capillaryLength));
@@ -537,7 +493,6 @@ public class InjectionActivity extends Activity implements
 
 	@Override
 	public void onPause() {
-		CEToolboxActivity.fragmentData = new GlobalState();
 		try {
 			CEToolboxActivity.fragmentData.setCapillaryLength(Double
 					.valueOf(capillaryLengthValue.getText().toString()));

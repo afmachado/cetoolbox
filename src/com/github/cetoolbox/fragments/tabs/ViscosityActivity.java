@@ -35,13 +35,10 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 import com.github.cetoolbox.CEToolboxActivity;
 import com.github.cetoolbox.CapillaryElectrophoresis;
-import com.github.cetoolbox.GlobalState;
 import com.github.cetoolbox.R;
 
 public class ViscosityActivity extends Activity implements
 		AdapterView.OnItemSelectedListener, View.OnClickListener {
-
-	public static final String PREFS_NAME = "capillary.electrophoresis.toolbox.PREFERENCE_FILE_KEY";
 
 	Button calculate;
 	Button reset;
@@ -106,28 +103,8 @@ public class ViscosityActivity extends Activity implements
 		reset = (Button) findViewById(R.id.button2);
 		reset.setOnClickListener(this);
 
-		/* Restore preferences */
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		capillaryLength = Double.longBitsToDouble(settings.getLong(
-				"capillaryLength", Double.doubleToLongBits(100.0)));
-		toWindowLength = Double.longBitsToDouble(settings.getLong(
-				"toWindowLength", Double.doubleToLongBits(100.0)));
-		diameter = Double.longBitsToDouble(settings.getLong("diameter",
-				Double.doubleToLongBits(50.0)));
-		pressure = Double.longBitsToDouble(settings.getLong("pressure",
-				Double.doubleToLongBits(30.0)));
-		pressureSpinPosition = settings.getInt("pressureSpinPosition", 0);
-		detectionTime = Double.longBitsToDouble(settings.getLong(
-				"detectionTime", Double.doubleToLongBits(10.0)));
-		detectionTimeSpinPosition = settings.getInt(
-				"detectionTimeSpinPosition", 0);
+		getGlobalStateValues();
 
-		if (CEToolboxActivity.fragmentData == null) {
-			CEToolboxActivity.fragmentData = new GlobalState();
-			setGlobalStateValues();
-		} else {
-			getGlobalStateValues();
-		}
 	}
 
 	@Override
@@ -274,9 +251,8 @@ public class ViscosityActivity extends Activity implements
 			}
 			if (validatedValues) {
 				/* If all is fine, save the data and compute */
-				SharedPreferences preferences = getSharedPreferences(
-						PREFS_NAME, 0);
-				SharedPreferences.Editor editor = preferences.edit();
+				SharedPreferences.Editor editor = CEToolboxActivity.preferences
+						.edit();
 
 				editor.putLong("capillaryLength",
 						Double.doubleToLongBits(capillaryLength));
@@ -385,7 +361,6 @@ public class ViscosityActivity extends Activity implements
 
 	@Override
 	public void onPause() {
-		CEToolboxActivity.fragmentData = new GlobalState();
 		try {
 			CEToolboxActivity.fragmentData.setCapillaryLength(Double
 					.valueOf(capillaryLengthValue.getText().toString()));

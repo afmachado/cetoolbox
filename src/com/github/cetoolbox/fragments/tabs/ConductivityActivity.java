@@ -33,7 +33,6 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 import com.github.cetoolbox.CEToolboxActivity;
 import com.github.cetoolbox.CapillaryElectrophoresis;
-import com.github.cetoolbox.GlobalState;
 import com.github.cetoolbox.R;
 
 public class ConductivityActivity extends Activity implements
@@ -83,25 +82,7 @@ public class ConductivityActivity extends Activity implements
 		reset = (Button) findViewById(R.id.button2);
 		reset.setOnClickListener(this);
 
-		/* Restore preferences */
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		capillaryLength = Double.longBitsToDouble(settings.getLong(
-				"capillaryLength", Double.doubleToLongBits(100.0)));
-		toWindowLength = Double.longBitsToDouble(settings.getLong(
-				"toWindowLength", Double.doubleToLongBits(100.0)));
-		diameter = Double.longBitsToDouble(settings.getLong("diameter",
-				Double.doubleToLongBits(50.0)));
-		voltage = Double.longBitsToDouble(settings.getLong("voltage",
-				Double.doubleToLongBits(30000.0)));
-		electricCurrent = Double.longBitsToDouble(settings.getLong(
-				"electricCurrent", Double.doubleToLongBits(30.0)));
-
-		if (CEToolboxActivity.fragmentData == null) {
-			CEToolboxActivity.fragmentData = new GlobalState();
-			setGlobalStateValues();
-		} else {
-			getGlobalStateValues();
-		}
+		getGlobalStateValues();
 	}
 
 	@Override
@@ -320,7 +301,6 @@ public class ConductivityActivity extends Activity implements
 
 	@Override
 	public void onPause() {
-		CEToolboxActivity.fragmentData = new GlobalState();
 		try {
 			CEToolboxActivity.fragmentData.setCapillaryLength(Double
 					.valueOf(capillaryLengthValue.getText().toString()));

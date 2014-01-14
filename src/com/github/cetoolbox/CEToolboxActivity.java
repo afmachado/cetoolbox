@@ -22,27 +22,35 @@ import com.github.cetoolbox.fragments.tabs.InjectionActivity;
 import com.github.cetoolbox.fragments.tabs.MobilityActivity;
 import com.github.cetoolbox.fragments.tabs.ViscosityActivity;
 import com.github.cetoolbox.GlobalState;
+
 import android.os.Bundle;
 import android.app.TabActivity;
 import android.widget.TabHost;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
+
 import com.github.cetoolbox.R;
 
 public class CEToolboxActivity extends TabActivity {
 
 	static public GlobalState fragmentData;
+	public static final String PREFS_NAME = "capillary.electrophoresis.toolbox.PREFERENCE_FILE_KEY";
+	static public SharedPreferences preferences;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		fragmentData = null;
+		preferences = getSharedPreferences(PREFS_NAME, 0);
+
+		initializeFragmentData();
 
 		TabHost tabHost = getTabHost(); // The activity TabHost
 		TabHost.TabSpec spec; // Reusable TabSpec for each tab
 		Intent intent; // Reusable Intent for each tab
+
 		try {
 			intent = new Intent(this.getBaseContext(), InjectionActivity.class);
 			spec = tabHost.newTabSpec("injection");
@@ -63,11 +71,12 @@ public class CEToolboxActivity extends TabActivity {
 			spec.setIndicator("Flowrate");
 			tabHost.addTab(spec);
 
-/*			intent = new Intent(this.getBaseContext(), MobilityActivity.class);
-			spec = tabHost.newTabSpec("mobility");
-			spec.setContent(intent);
-			spec.setIndicator("Mobility");
-			tabHost.addTab(spec);*/
+			/*
+			 * intent = new Intent(this.getBaseContext(),
+			 * MobilityActivity.class); spec = tabHost.newTabSpec("mobility");
+			 * spec.setContent(intent); spec.setIndicator("Mobility");
+			 * tabHost.addTab(spec);
+			 */
 
 			intent = new Intent(this.getBaseContext(), ViscosityActivity.class);
 			spec = tabHost.newTabSpec("viscosity");
@@ -108,5 +117,44 @@ public class CEToolboxActivity extends TabActivity {
 			/* e.printStackTrace(); */
 		}
 
+	}
+	public static void initializeFragmentData() {
+		fragmentData = new GlobalState();
+
+		fragmentData.setCapillaryLength(Double.longBitsToDouble(preferences
+				.getLong("capillaryLength", Double.doubleToLongBits(100.0))));
+		fragmentData.setToWindowLength(Double.longBitsToDouble(preferences
+				.getLong("toWindowLength", Double.doubleToLongBits(90.0))));
+		fragmentData.setDiameter(Double.longBitsToDouble(preferences.getLong(
+				"diameter", Double.doubleToLongBits(30.0))));
+		fragmentData.setDuration(Double.longBitsToDouble(preferences.getLong(
+				"duration", Double.doubleToLongBits(21.0))));
+		fragmentData.setViscosity(Double.longBitsToDouble(preferences.getLong(
+				"viscosity", Double.doubleToLongBits(1.0))));
+		fragmentData.setPressure(Double.longBitsToDouble(preferences.getLong(
+				"pressure", Double.doubleToLongBits(30.0))));
+		fragmentData.setConcentration(Double.longBitsToDouble(preferences
+				.getLong("concentration", Double.doubleToLongBits(21.0))));
+		fragmentData.setMolecularWeight(Double.longBitsToDouble(preferences
+				.getLong("molecularWeight", Double.doubleToLongBits(150000.0))));
+		fragmentData.setVoltage(Double.longBitsToDouble(preferences.getLong(
+				"voltage", Double.doubleToLongBits(30000.0))));
+		fragmentData.setDetectionTime(Double.longBitsToDouble(preferences
+				.getLong("detectionTime", Double.doubleToLongBits(3815.0))));
+		fragmentData.setElectricCurrent(Double.longBitsToDouble(preferences
+				.getLong("electricCurrent", Double.doubleToLongBits(4.0))));
+		fragmentData
+				.setElectroOsmosisTime(Double.longBitsToDouble(preferences
+						.getLong("electroOsmosisTime",
+								Double.doubleToLongBits(100.0))));
+		fragmentData.setConcentrationSpinPosition(preferences.getInt(
+				"concentrationSpinPosition", 0));
+		fragmentData.setPressureSpinPosition(preferences.getInt(
+				"pressureSpinPosition", 0));
+		fragmentData.setDetectionTimeSpinPosition(preferences.getInt(
+				"detectionTimeSpinPosition", 0));
+		fragmentData.setElectroOsmosisTimeSpinPosition(preferences.getInt(
+				"electroOsmosisTimeSpinPosition", 0));
+		
 	}
 }
