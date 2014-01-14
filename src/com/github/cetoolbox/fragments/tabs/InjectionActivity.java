@@ -163,7 +163,7 @@ public class InjectionActivity extends Activity implements
 		concentrationSpinPosition = CEToolboxActivity.fragmentData
 				.getConcentrationSpinPosition();
 		molecularWeight = CEToolboxActivity.fragmentData.getMolecularWeight();
-        voltage = CEToolboxActivity.fragmentData.getVoltage();
+		voltage = CEToolboxActivity.fragmentData.getVoltage();
 	}
 
 	private void setGlobalStateValues() {

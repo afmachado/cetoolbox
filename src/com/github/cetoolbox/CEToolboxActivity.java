@@ -65,7 +65,7 @@ public class CEToolboxActivity extends TabActivity {
 			spec.setIndicator("Conductivity");
 			tabHost.addTab(spec);
 
-			intent = new Intent(this.getBaseContext(), AboutActivity.class);
+			intent = new Intent(this.getBaseContext(), FlowrateActivity.class);
 			spec = tabHost.newTabSpec("flowate");
 			spec.setContent(intent);
 			spec.setIndicator("Flowrate");
@@ -118,6 +118,7 @@ public class CEToolboxActivity extends TabActivity {
 		}
 
 	}
+
 	public static void initializeFragmentData() {
 		fragmentData = new GlobalState();
 
@@ -135,8 +136,10 @@ public class CEToolboxActivity extends TabActivity {
 				"pressure", Double.doubleToLongBits(30.0))));
 		fragmentData.setConcentration(Double.longBitsToDouble(preferences
 				.getLong("concentration", Double.doubleToLongBits(21.0))));
-		fragmentData.setMolecularWeight(Double.longBitsToDouble(preferences
-				.getLong("molecularWeight", Double.doubleToLongBits(150000.0))));
+		fragmentData
+				.setMolecularWeight(Double.longBitsToDouble(preferences
+						.getLong("molecularWeight",
+								Double.doubleToLongBits(150000.0))));
 		fragmentData.setVoltage(Double.longBitsToDouble(preferences.getLong(
 				"voltage", Double.doubleToLongBits(30000.0))));
 		fragmentData.setDetectionTime(Double.longBitsToDouble(preferences
@@ -155,6 +158,6 @@ public class CEToolboxActivity extends TabActivity {
 				"detectionTimeSpinPosition", 0));
 		fragmentData.setElectroOsmosisTimeSpinPosition(preferences.getInt(
 				"electroOsmosisTimeSpinPosition", 0));
-		
+
 	}
 }

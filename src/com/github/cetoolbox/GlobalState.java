@@ -69,7 +69,6 @@ public class GlobalState {
 		return viscosity;
 	}
 
-
 	public void setPressure(Double pressure) {
 		this.pressure = pressure;
 	}
@@ -130,7 +129,6 @@ public class GlobalState {
 		return electroOsmosisTime;
 	}
 
-
 	public void setConcentrationSpinPosition(int concentrationSpinPosition) {
 		this.concentrationSpinPosition = concentrationSpinPosition;
 	}
@@ -155,7 +153,8 @@ public class GlobalState {
 		return detectionTimeSpinPosition;
 	}
 
-	public void setElectroOsmosisTimeSpinPosition(int electroOsmosisTimeSpinPosition) {
+	public void setElectroOsmosisTimeSpinPosition(
+			int electroOsmosisTimeSpinPosition) {
 		this.electroOsmosisTimeSpinPosition = electroOsmosisTimeSpinPosition;
 	}
 

@@ -47,7 +47,7 @@ public class CapillaryElectrophoresis {
 	/* Analyte molecular weight (g/mol) */
 	private double molecularWeight;
 
-	/* The voltage applied to the capillary (kilovolt) */
+	/* The voltage applied to the capillary (volt) */
 	private double voltage;
 
 	/* The voltage applied to the capillary (microampere) */
@@ -195,13 +195,14 @@ public class CapillaryElectrophoresis {
 	public double getMicroEOF() {
 		double microEOF;
 		microEOF = (totalLength * toWindowLength)
-				/ (electroOsmosisTime * voltage * Math.pow(10, 3));
+				/ (electroOsmosisTime * voltage);
 		return microEOF;
 	};
 
 	public double getLengthPerMinute() {
 		double lengthPerMinute;
-		lengthPerMinute = (60 * getMicroEOF() * voltage * Math.pow(10,5)) / totalLength;
+		lengthPerMinute = (60 * getMicroEOF() * getFieldStrength() * Math.pow(
+				10, -2));
 		return lengthPerMinute;
 	}
 

@@ -133,7 +133,8 @@ public class FlowrateActivity extends Activity implements
 		toWindowLength = CEToolboxActivity.fragmentData.getToWindowLength();
 		diameter = CEToolboxActivity.fragmentData.getDiameter();
 		voltage = CEToolboxActivity.fragmentData.getVoltage();
-		electroOsmosisTime = CEToolboxActivity.fragmentData.getElectroOsmosisTime();
+		electroOsmosisTime = CEToolboxActivity.fragmentData
+				.getElectroOsmosisTime();
 		electroOsmosisTimeSpinPosition = CEToolboxActivity.fragmentData
 				.getElectroOsmosisTimeSpinPosition();
 
@@ -145,7 +146,8 @@ public class FlowrateActivity extends Activity implements
 		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
 		CEToolboxActivity.fragmentData.setDiameter(diameter);
 		CEToolboxActivity.fragmentData.setVoltage(voltage);
-		CEToolboxActivity.fragmentData.setElectroOsmosisTime(electroOsmosisTime);
+		CEToolboxActivity.fragmentData
+				.setElectroOsmosisTime(electroOsmosisTime);
 		CEToolboxActivity.fragmentData
 				.setElectroOsmosisTimeSpinPosition(electroOsmosisTimeSpinPosition);
 	}
@@ -187,7 +189,8 @@ public class FlowrateActivity extends Activity implements
 				errorMessage = "The diameter can not be null.";
 			} else if (Double.valueOf(voltageValue.getText().toString()) == 0) {
 				errorMessage = "The voltage can not be null.";
-			} else if (Double.valueOf(electroOsmosisTimeValue.getText().toString()) == 0) {
+			} else if (Double.valueOf(electroOsmosisTimeValue.getText()
+					.toString()) == 0) {
 				errorMessage = "The electro-osmosis time can not be null.";
 			}
 		}
@@ -213,8 +216,8 @@ public class FlowrateActivity extends Activity implements
 						.toString());
 				diameter = Double.valueOf(diameterValue.getText().toString());
 				voltage = Double.valueOf(voltageValue.getText().toString());
-				electroOsmosisTime = Double.valueOf(electroOsmosisTimeValue.getText()
-						.toString());
+				electroOsmosisTime = Double.valueOf(electroOsmosisTimeValue
+						.getText().toString());
 				/* Check the values for incoherence */
 				if (toWindowLength > capillaryLength) {
 					validatedValues = false;
@@ -241,22 +244,22 @@ public class FlowrateActivity extends Activity implements
 				editor.commit();
 
 				capillary = new CapillaryElectrophoresis();
-                capillary.setTotalLength(capillaryLength);
-                capillary.setToWindowLength(toWindowLength);
-                capillary.setDiameter(diameter);
-                capillary.setVoltage(voltage);
-                Double electroOsmosisTimeSecond = 0.0;
+				capillary.setTotalLength(capillaryLength);
+				capillary.setToWindowLength(toWindowLength);
+				capillary.setDiameter(diameter);
+				capillary.setVoltage(voltage);
+				Double electroOsmosisTimeSecond = 0.0;
 				if (electroOsmosisTimeUnit.compareTo("min") == 0) {
 					electroOsmosisTimeSecond = electroOsmosisTime * 60;
 				} else {
 					electroOsmosisTimeSecond = electroOsmosisTime;
 				}
-                capillary.setElectroOsmosisTime(electroOsmosisTimeSecond);
+				capillary.setElectroOsmosisTime(electroOsmosisTimeSecond);
 
 				DecimalFormat doubleDecimalFormat = new DecimalFormat("#.##");
 
-				Double fieldStrength = capillary.getFieldStrength(); /* nl */
-				Double microEOF = capillary.getMicroEOF(); /* cm2/V/s */
+				Double fieldStrength = capillary.getFieldStrength(); /* V/cm */
+				Double microEOF = capillary.getMicroEOF() * 1000; /* E-3 cm2/V/s */
 				Double lengthPerMinute = capillary.getLengthPerMinute(); /* m */
 				Double flowRate = capillary.getFlowRate(); /* nL/min */
 
@@ -270,7 +273,7 @@ public class FlowrateActivity extends Activity implements
 				builder.setView(flowRateDetailsView);
 
 				TextView title = new TextView(this);
-				title.setText("FlowRate Details");
+				title.setText("Flow Rate Details");
 				title.setTextSize(20);
 				title.setBackgroundColor(Color.DKGRAY);
 				title.setTextColor(Color.WHITE);
@@ -284,14 +287,16 @@ public class FlowrateActivity extends Activity implements
 						.format(fieldStrength) + " V/cm");
 				TextView tvMicroEOF = (TextView) flowRateDetailsView
 						.findViewById(R.id.microEOFValue);
-				tvMicroEOF.setText(doubleDecimalFormat
-						.format(microEOF) + " nl");
+				tvMicroEOF.setText(doubleDecimalFormat.format(microEOF)
+						+ "E-03 cm2/V/s");
 				TextView tvLengthPerMinute = (TextView) flowRateDetailsView
 						.findViewById(R.id.lengthPerMinuteValue);
-				tvLengthPerMinute.setText(doubleDecimalFormat.format(lengthPerMinute));
+				tvLengthPerMinute.setText(doubleDecimalFormat
+						.format(lengthPerMinute) + " m");
 				TextView tvFlowRate = (TextView) flowRateDetailsView
 						.findViewById(R.id.flowRateValue);
-				tvFlowRate.setText(doubleDecimalFormat.format(flowRate));
+				tvFlowRate.setText(doubleDecimalFormat.format(flowRate)
+						+ " nL/min");
 
 				builder.setNeutralButton("Close",
 						new DialogInterface.OnClickListener() {
@@ -344,7 +349,6 @@ public class FlowrateActivity extends Activity implements
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
-		/* electroOsmosisTimeSpin.setText(""); */
 	}
 
 	@Override
@@ -377,7 +381,8 @@ public class FlowrateActivity extends Activity implements
 			CEToolboxActivity.fragmentData.setElectroOsmosisTime(Double
 					.valueOf(electroOsmosisTimeValue.getText().toString()));
 		} catch (Exception e) {
-			CEToolboxActivity.fragmentData.setElectroOsmosisTime(electroOsmosisTime);
+			CEToolboxActivity.fragmentData
+					.setElectroOsmosisTime(electroOsmosisTime);
 		}
 		CEToolboxActivity.fragmentData
 				.setElectroOsmosisTimeSpinPosition(electroOsmosisTimeSpinPosition);
@@ -412,12 +417,13 @@ public class FlowrateActivity extends Activity implements
 			state.putDouble("voltage", voltage);
 		}
 		try {
-			state.putDouble("electroOsmosisTime",
-					Double.valueOf(electroOsmosisTimeValue.getText().toString()));
+			state.putDouble("electroOsmosisTime", Double
+					.valueOf(electroOsmosisTimeValue.getText().toString()));
 		} catch (Exception e) {
 			state.putDouble("electroOsmosisTime", electroOsmosisTime);
 		}
-		state.putInt("electroOsmosisTimeSpinPosition", electroOsmosisTimeSpinPosition);
+		state.putInt("electroOsmosisTimeSpinPosition",
+				electroOsmosisTimeSpinPosition);
 
 		super.onSaveInstanceState(state);
 	}

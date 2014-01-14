@@ -17,15 +17,15 @@ package com.github.cetoolbox;
 
 public class CEToolboxHelper {
 
-        static final public double ParseDouble(String string) {
-                double myDouble = 0;
-                try {  
-                        myDouble = Double.parseDouble(string);
-               
-                } catch(NumberFormatException nfe) {
-               
-                        System.out.println("Could not parse " + nfe);
-                }
-                return myDouble;
-        }
+	static final public double ParseDouble(String string) {
+		double myDouble = 0;
+		try {
+			myDouble = Double.parseDouble(string);
+
+		} catch (NumberFormatException nfe) {
+
+			System.out.println("Could not parse " + nfe);
+		}
+		return myDouble;
+	}
 }
