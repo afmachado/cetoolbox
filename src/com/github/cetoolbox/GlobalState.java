@@ -16,22 +16,22 @@
 package com.github.cetoolbox;
 
 public class GlobalState {
-	private Double diameter;
-	private Double duration;
-	private Double viscosity;
-	private Double capillaryLength;
-	private Double pressure;
-	private Double toWindowLength;
-	private Double concentration;
-	private Double molecularWeight;
-	private Double voltage;
-	private Double detectionTime;
-	private Double electricCurrent;
-	private Double electroOsmosisTime;
-	private int concentrationSpinPosition;
-	private int pressureSpinPosition;
-	private int detectionTimeSpinPosition;
-	private int electroOsmosisTimeSpinPosition;
+	private Double capillaryLength = 60.0;
+	private Double toWindowLength = 50.0;
+	private Double diameter = 50.0;
+	private Double duration = 20.0;
+	private Double viscosity = 1.0;
+	private Double pressure = 20684.0;
+	private Double concentration = 0.01;
+	private Double molecularWeight = 600.0;
+	private Double voltage = 30000.0;
+	private Double detectionTime = 48.0;
+	private Double electricCurrent = 4.0;
+	private Double electroOsmosisTime = 120.0;
+	private int concentrationSpinPosition = 0;
+	private int pressureSpinPosition = 0;
+	private int detectionTimeSpinPosition = 0;
+	private int electroOsmosisTimeSpinPosition = 0;
 
 	public void setDiameter(Double diameter) {
 		this.diameter = diameter;
