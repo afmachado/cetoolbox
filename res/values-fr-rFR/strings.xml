@@ -51,7 +51,7 @@
     <string name="PlugLengthToWindow">Plug (% of length to window): </string>
     <string name="InjectionPressure">Injection pressure: </string>
     <string name="InjectionPlugLength">Injection plug length: </string>
-    <string name="FlowRate">FlowRate: </string>
+    <string name="FlowRate">Flow rate: </string>
     <string name="FieldStrength">Field strength: </string>
     <string name="CapillaryToWindowVolume">Capillary volume to window: </string>
     <string name="ElectroOsmosisTime">Electro-osmosis time</string>
