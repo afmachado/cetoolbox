@@ -287,6 +287,8 @@ public class ViscosityActivity extends Activity implements
 				editor.putInt("pressureSpinPosition", pressureSpinPosition);
 				editor.putLong("detectionTime",
 						Double.doubleToLongBits(detectionTime));
+				editor.putInt("detectionTimeSpinPosition",
+						detectionTimeSpinPosition);
 
 				editor.commit();
 
@@ -298,7 +300,7 @@ public class ViscosityActivity extends Activity implements
 				capillary.setDetectionTime(detectionTimeSecond);
 
 				DecimalFormat doubleDecimalFormat = new DecimalFormat("#.##");
-				Double viscosity = capillary.getViscosity(); /* nl */
+				Double viscosity = capillary.getViscosity(); /* cp */
 
 				/* Build the result window */
 				LayoutInflater li = LayoutInflater.from(this);
@@ -320,6 +322,7 @@ public class ViscosityActivity extends Activity implements
 
 				TextView tvHydrodynamicInjection = (TextView) viscosityDetailsView
 						.findViewById(R.id.viscosityValue);
+
 				tvHydrodynamicInjection.setText(doubleDecimalFormat
 						.format(viscosity) + " cp");
 

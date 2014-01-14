@@ -175,8 +175,7 @@ public class CapillaryElectrophoresis {
 	public double getViscosity() {
 		double viscosity;
 		viscosity = (pressure * Math.pow(diameter, 2) * detectionTime)
-				/ (32 * totalLength * toWindowLength * Math.pow(10, 5));
-		viscosity = 0.0;
+				/ (32 * totalLength * toWindowLength * Math.pow(10, 3));
 		return viscosity;
 	}
 

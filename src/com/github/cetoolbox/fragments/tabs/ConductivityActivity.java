@@ -28,7 +28,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.util.Locale;
@@ -49,9 +48,6 @@ public class ConductivityActivity extends Activity implements
 	EditText diameterValue;
 	EditText voltageValue;
 	EditText electricCurrentValue;
-
-	Spinner voltageSpin;
-	int voltageSpinPosition;
 
 	CapillaryElectrophoresis capillary;
 
@@ -96,10 +92,9 @@ public class ConductivityActivity extends Activity implements
 		diameter = Double.longBitsToDouble(settings.getLong("diameter",
 				Double.doubleToLongBits(50.0)));
 		voltage = Double.longBitsToDouble(settings.getLong("voltage",
-				Double.doubleToLongBits(30.0)));
-		voltageSpinPosition = settings.getInt("voltageSpinPosition", 0);
+				Double.doubleToLongBits(30000.0)));
 		electricCurrent = Double.longBitsToDouble(settings.getLong(
-				"electricCurrent", Double.doubleToLongBits(10.0)));
+				"electricCurrent", Double.doubleToLongBits(30.0)));
 
 		if (CEToolboxActivity.fragmentData == null) {
 			CEToolboxActivity.fragmentData = new GlobalState();
@@ -117,9 +112,7 @@ public class ConductivityActivity extends Activity implements
 		toWindowLength = savedInstanceState.getDouble("toWindowLength");
 		diameter = savedInstanceState.getDouble("diameter");
 		voltage = savedInstanceState.getDouble("voltage");
-		voltageSpinPosition = savedInstanceState
-				.getInt("voltageSpinPosition");
-		electricCurrent = savedInstanceState.getDouble("detectionTime");
+		electricCurrent = savedInstanceState.getDouble("electricCurrent");
 
 		/* Set GlobalState values */
 		setGlobalStateValues();
@@ -142,7 +135,7 @@ public class ConductivityActivity extends Activity implements
 		toWindowLength = CEToolboxActivity.fragmentData.getToWindowLength();
 		diameter = CEToolboxActivity.fragmentData.getDiameter();
 		voltage = CEToolboxActivity.fragmentData.getVoltage();
-		electricCurrent = CEToolboxActivity.fragmentData.getDetectionTime();
+		electricCurrent = CEToolboxActivity.fragmentData.getElectricCurrent();
 
 	}
 
@@ -152,15 +145,15 @@ public class ConductivityActivity extends Activity implements
 		CEToolboxActivity.fragmentData.setToWindowLength(toWindowLength);
 		CEToolboxActivity.fragmentData.setDiameter(diameter);
 		CEToolboxActivity.fragmentData.setVoltage(voltage);
-		CEToolboxActivity.fragmentData.setDetectionTime(electricCurrent);
+		CEToolboxActivity.fragmentData.setElectricCurrent(electricCurrent);
 	}
 
 	private void editTextInitialize() {
 		capillaryLengthValue.setText(capillaryLength.toString());
-		diameterValue.setText(diameter.toString());
 		toWindowLengthValue.setText(toWindowLength.toString());
+		diameterValue.setText(diameter.toString());
 		voltageValue.setText(voltage.toString());
-		voltageSpin.setSelection(voltageSpinPosition);
+		electricCurrentValue.setText(electricCurrent.toString());
 	}
 
 	/*
@@ -191,7 +184,8 @@ public class ConductivityActivity extends Activity implements
 				errorMessage = "The diameter can not be null.";
 			} else if (Double.valueOf(voltageValue.getText().toString()) == 0) {
 				errorMessage = "The voltage can not be null.";
-			} else if (Double.valueOf(electricCurrentValue.getText().toString()) == 0) {
+			} else if (Double
+					.valueOf(electricCurrentValue.getText().toString()) == 0) {
 				errorMessage = "The detection time can not be null.";
 			}
 		}
@@ -203,7 +197,6 @@ public class ConductivityActivity extends Activity implements
 	public void onClick(View view) {
 		if (view == calculate) {
 			boolean validatedValues = false;
-			Double voltageMBar = 0.0;
 			String errorMessage;
 
 			errorMessage = parseEditTextContent();
@@ -212,18 +205,14 @@ public class ConductivityActivity extends Activity implements
 			}
 			if (validatedValues) {
 				/* Parameter validation */
-				diameter = Double.valueOf(diameterValue.getText().toString());
-				electricCurrent = Double.valueOf(electricCurrentValue.getText()
-						.toString());
 				capillaryLength = Double.valueOf(capillaryLengthValue.getText()
 						.toString());
-				voltage = Double.valueOf(voltageValue.getText().toString());
-				if (voltageUnit.compareTo("psi") == 0) {
-					voltageMBar = voltage * 6894.8 / 100;
-				} else {
-					voltageMBar = voltage;
-				}
 				toWindowLength = Double.valueOf(toWindowLengthValue.getText()
+						.toString());
+				diameter = Double.valueOf(diameterValue.getText().toString());
+				voltage = Double.valueOf(voltageValue.getText().toString());
+
+				electricCurrent = Double.valueOf(electricCurrentValue.getText()
 						.toString());
 
 				/* Check the values for incoherence */
@@ -244,7 +233,6 @@ public class ConductivityActivity extends Activity implements
 						Double.doubleToLongBits(toWindowLength));
 				editor.putLong("diameter", Double.doubleToLongBits(diameter));
 				editor.putLong("voltage", Double.doubleToLongBits(voltage));
-				editor.putInt("voltageSpinPosition", voltageSpinPosition);
 				editor.putLong("electricCurrent",
 						Double.doubleToLongBits(electricCurrent));
 
@@ -254,8 +242,8 @@ public class ConductivityActivity extends Activity implements
 				capillary.setTotalLength(capillaryLength);
 				capillary.setToWindowLength(toWindowLength);
 				capillary.setDiameter(diameter);
-				capillary.setVoltage(voltageMBar);
-				capillary.setDetectionTime(electricCurrent);
+				capillary.setVoltage(voltage);
+				capillary.setElectricCurrent(electricCurrent);
 
 				DecimalFormat doubleDecimalFormat = new DecimalFormat("#.##");
 				Double conductivity = capillary.getConductivity(); /* nl */
@@ -280,8 +268,8 @@ public class ConductivityActivity extends Activity implements
 
 				TextView tvConductivity = (TextView) conductivityDetailsView
 						.findViewById(R.id.conductivityValue);
-				tvConductivity.setText(doubleDecimalFormat
-						.format(conductivity) + " cp");
+				tvConductivity.setText(doubleDecimalFormat.format(conductivity)
+						+ " S/m");
 
 				builder.setNeutralButton("Close",
 						new DialogInterface.OnClickListener() {
@@ -315,7 +303,6 @@ public class ConductivityActivity extends Activity implements
 			toWindowLength = 100.0;
 			diameter = 50.0;
 			voltage = 30.0;
-			voltageSpinPosition = 0;
 			electricCurrent = 10.0;
 
 			editTextInitialize();
@@ -325,15 +312,10 @@ public class ConductivityActivity extends Activity implements
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
-		if (parent == voltageSpin) {
-			voltageUnit = (String) voltageSpin.getItemAtPosition(position);
-			voltageSpinPosition = position;
-		}
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
-		/* concentrationSpin.setText(""); */
 	}
 
 	@Override
@@ -364,10 +346,10 @@ public class ConductivityActivity extends Activity implements
 			CEToolboxActivity.fragmentData.setVoltage(voltage);
 		}
 		try {
-			CEToolboxActivity.fragmentData.setDuration(Double
+			CEToolboxActivity.fragmentData.setElectricCurrent(Double
 					.valueOf(electricCurrentValue.getText().toString()));
 		} catch (Exception e) {
-			CEToolboxActivity.fragmentData.setDuration(electricCurrent);
+			CEToolboxActivity.fragmentData.setElectricCurrent(electricCurrent);
 		}
 
 		super.onPause();

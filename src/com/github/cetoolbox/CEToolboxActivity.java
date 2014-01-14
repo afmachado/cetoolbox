@@ -27,7 +27,6 @@ import android.app.TabActivity;
 import android.widget.TabHost;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.res.Resources;
 import com.github.cetoolbox.R;
 
 public class CEToolboxActivity extends TabActivity {
@@ -44,7 +43,6 @@ public class CEToolboxActivity extends TabActivity {
 		TabHost tabHost = getTabHost(); // The activity TabHost
 		TabHost.TabSpec spec; // Reusable TabSpec for each tab
 		Intent intent; // Reusable Intent for each tab
-		Resources res = getResources();
 		try {
 			intent = new Intent(this.getBaseContext(), InjectionActivity.class);
 			spec = tabHost.newTabSpec("injection");
@@ -54,22 +52,22 @@ public class CEToolboxActivity extends TabActivity {
 
 			intent = new Intent(this.getBaseContext(),
 					ConductivityActivity.class);
-			spec = tabHost.newTabSpec("Conductivity");
+			spec = tabHost.newTabSpec("conductivity");
 			spec.setContent(intent);
 			spec.setIndicator("Conductivity");
 			tabHost.addTab(spec);
 
-			intent = new Intent(this.getBaseContext(), FlowrateActivity.class);
-			spec = tabHost.newTabSpec("flowRate");
+			intent = new Intent(this.getBaseContext(), AboutActivity.class);
+			spec = tabHost.newTabSpec("flowate");
 			spec.setContent(intent);
-			spec.setIndicator("FlowRate");
+			spec.setIndicator("Flowrate");
 			tabHost.addTab(spec);
 
-			intent = new Intent(this.getBaseContext(), MobilityActivity.class);
+/*			intent = new Intent(this.getBaseContext(), MobilityActivity.class);
 			spec = tabHost.newTabSpec("mobility");
 			spec.setContent(intent);
 			spec.setIndicator("Mobility");
-			tabHost.addTab(spec);
+			tabHost.addTab(spec);*/
 
 			intent = new Intent(this.getBaseContext(), ViscosityActivity.class);
 			spec = tabHost.newTabSpec("viscosity");
