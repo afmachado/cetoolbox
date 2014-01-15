@@ -28,6 +28,7 @@ import android.app.TabActivity;
 import android.widget.TabHost;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.SharedPreferences;
 
 import com.github.cetoolbox.R;
@@ -46,6 +47,7 @@ public class CEToolboxActivity extends TabActivity {
 		preferences = getSharedPreferences(PREFS_NAME, 0);
 
 		initializeFragmentData();
+		Resources res = getResources();
 
 		TabHost tabHost = getTabHost(); // The activity TabHost
 		TabHost.TabSpec spec; // Reusable TabSpec for each tab
@@ -55,20 +57,23 @@ public class CEToolboxActivity extends TabActivity {
 			intent = new Intent(this.getBaseContext(), InjectionActivity.class);
 			spec = tabHost.newTabSpec("injection");
 			spec.setContent(intent);
-			spec.setIndicator("Injection");
+			spec.setIndicator("Injection",
+					res.getDrawable(R.drawable.ic_action_injection));
 			tabHost.addTab(spec);
 
 			intent = new Intent(this.getBaseContext(),
 					ConductivityActivity.class);
 			spec = tabHost.newTabSpec("conductivity");
 			spec.setContent(intent);
-			spec.setIndicator("Conductivity");
+			spec.setIndicator("Conductivity",
+					res.getDrawable(R.drawable.ic_action_conductivity));
 			tabHost.addTab(spec);
 
 			intent = new Intent(this.getBaseContext(), FlowrateActivity.class);
 			spec = tabHost.newTabSpec("flowate");
 			spec.setContent(intent);
-			spec.setIndicator("Flowrate");
+			spec.setIndicator("Flowrate",
+					res.getDrawable(R.drawable.ic_action_flowrate));
 			tabHost.addTab(spec);
 
 			/*
@@ -81,13 +86,15 @@ public class CEToolboxActivity extends TabActivity {
 			intent = new Intent(this.getBaseContext(), ViscosityActivity.class);
 			spec = tabHost.newTabSpec("viscosity");
 			spec.setContent(intent);
-			spec.setIndicator("Viscosity");
+			spec.setIndicator("Viscosity",
+					res.getDrawable(R.drawable.ic_action_viscosity));
 			tabHost.addTab(spec);
 
 			intent = new Intent(this.getBaseContext(), AboutActivity.class);
 			spec = tabHost.newTabSpec("about");
 			spec.setContent(intent);
-			spec.setIndicator("About");
+			spec.setIndicator("About",
+					res.getDrawable(R.drawable.ic_action_about));
 			tabHost.addTab(spec);
 
 			/* width = number of letters * 10 + 10 */
